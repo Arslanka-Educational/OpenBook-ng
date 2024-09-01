@@ -1,1 +1,1 @@
-# OpenBook-2.0
+# OpenBook-ng
