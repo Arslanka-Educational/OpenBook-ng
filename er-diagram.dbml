@@ -1,0 +1,50 @@
+Table Author {
+  id uuid [pk] 
+  first_name varchar(100)
+  last_name varchar(100)
+}
+
+Table Book {
+  id uuid [pk] 
+  title varchar(255)
+  author_id uuid 
+}
+
+
+Table BookInstance {
+  id uuid [pk]
+  book_id uuid 
+  library_id uuid
+  release_date date
+}
+
+
+Table Library {
+  id uuid [pk] 
+  name varchar(255)
+  city varchar(100)
+  street varchar(100)
+  country varchar(100)
+}
+
+Table User {
+  id uuid [pk] 
+  email varchar(255)
+  phone varchar(20)
+}
+
+Table Reservation {
+  id uuid [pk] 
+  book_instance_id uuid 
+  user_id uuid 
+  start_date date
+  end_date date
+  status varchar(50)
+}
+
+Ref: Reservation.book_instance_id > BookInstance.id
+Ref: Reservation.user_id > User.id
+Ref: Book.author_id > Author.id
+Ref: BookInstance.book_id > Book.id
+Ref: BookInstance.library_id > Library.id
+
