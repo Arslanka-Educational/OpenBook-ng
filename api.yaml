@@ -2,15 +2,14 @@ openapi: 3.0.1
 info:
   title: API Gateway
   description: API Gateway for OpenBook services
-  version: 1.0.0
+  version: 0.0.1
 
 paths:
 
   /v1/users/registration:
     post:
-      operationId: RegisterUser
-      tags:
-        - Users
+      operationId: registerUser
+      tags: [ Users ]
       parameters:
         - $ref: '#/components/parameters/IdempotencyTokenHeader'
       requestBody:
@@ -58,14 +57,13 @@ paths:
 
   /v1/users/info/{userId}:
     get:
-      operationId: UserInfo
-      tags:
-        - Users
+      operationId: userInfo
+      tags: [ Users ]
       parameters:
         - $ref: '#/components/parameters/UIDPath'
       responses:
         200:
-          description: Результат выполнения запроса
+          description: UserInfoResponse
           content:
             application/json:
               schema:
@@ -90,9 +88,8 @@ paths:
 
   /v1/users/login:
     post:
-      operationId: LoginUser
-      tags:
-        - Users
+      operationId: loginUser
+      tags: [ Users ]
       parameters:
         - $ref: '#/components/parameters/IdempotencyTokenHeader'
       requestBody:
@@ -100,17 +97,7 @@ paths:
         content:
           application/json:
             schema:
-              title: UserLoginRequest
-              type: object
-              additionalProperties: false
-              required:
-                - email
-                - password
-              properties:
-                email:
-                  $ref: '#/components/schemas/Email'
-                password:
-                  $ref: '#/components/schemas/Password'
+              $ref: '#/components/schemas/JwtLoginResponse'
       responses:
         200:
           $ref: '#/components/responses/200'
@@ -121,9 +108,8 @@ paths:
 
   /v1/booking/{bookId}/reservation:
     post:
-      operationId: ReserveBook
-      tags:
-        - Reservation
+      operationId: reserveBook
+      tags: [ Reservation ]
       parameters:
         - $ref: '#/components/parameters/IdempotencyTokenHeader'
         - $ref: '#/components/parameters/UIDHeader'
@@ -148,9 +134,8 @@ paths:
 
   /v1/booking/reservation/{reservationId}:
     get:
-      operationId: GetReservationRequest
-      tags:
-        - Users
+      operationId: getReservationRequest
+      tags: [ Reservation ]
       parameters:
         - $ref: '#/components/parameters/UIDHeader'
         - name: reservationId
@@ -173,9 +158,8 @@ paths:
 
   /v1/books/{bookId}:
     get:
-      operationId: GetBookById
-      tags:
-        - Books
+      operationId: getBookById
+      tags: [ Books ]
       parameters:
         - name: bookId
           in: path
@@ -195,9 +179,8 @@ paths:
 
   /v1/books/name/{bookName}:
     get:
-      operationId: GetBookByName
-      tags:
-        - Books
+      operationId: getBookByName
+      tags: [ Books ]
       parameters:
         - name: bookName
           in: path
@@ -217,9 +200,8 @@ paths:
 
   /v1/books:
     get:
-      operationId: SearchBooks
-      tags:
-        - Books
+      operationId: searchBooks
+      tags: [ Books ]
       parameters:
         - name: title
           in: query
@@ -323,19 +305,19 @@ components:
 
   schemas:
     Email:
-      description: The email address of the client or the client's contact person
+      description: Users' email address
       nullable: false
       format: email
       type: string
 
     Password:
-      description: The password address of the client or the client's contact person
+      description: Users' password
       nullable: false
       format: password
       type: string
 
     Uid:
-      description: Идентификатор пользователя в формате UUID
+      description: Users' UUID
       type: string
       example: abcd1234-abcd-1234-abcd-1a2b3c4d
 
@@ -351,6 +333,9 @@ components:
 
     BookReservationSuccess:
       type: object
+      required:
+        - status
+        - reservationId
       properties:
         status:
           type: string
@@ -360,6 +345,9 @@ components:
 
     BookReservationFailure:
       type: object
+      required:
+        - status
+        - reasonCode
       properties:
         status:
           type: string
@@ -379,12 +367,20 @@ components:
 
     ReservationRequestSuccess:
       type: object
+      required:
+        - status
+        - data
       properties:
         status:
           type: string
           enum: [ SUCCESS ]
         data:
           type: object
+          required:
+            - id
+            - bookId
+            - userId
+            - reservationStatus
           properties:
             id:
               type: string
@@ -397,6 +393,9 @@ components:
 
     ReservationRequestFailure:
       type: object
+      required:
+        - satus
+        - reasonCode
       properties:
         status:
           type: string
@@ -406,6 +405,11 @@ components:
 
     BookContentResponse:
       type: object
+      required:
+        - id
+        - title
+        - author
+        - content
       properties:
         id:
           type: string
@@ -418,6 +422,9 @@ components:
 
     BookSearchResponse:
       type: object
+      required:
+        - books
+        - currentPage
       properties:
         books:
           type: array
@@ -432,7 +439,22 @@ components:
         totalItems:
           type: integer
 
+    JwtLoginResponse:
+      type: object
+      required:
+        - access_token
+        - refresh_token
+      properties:
+        access_token:
+          type: string
+        refresh_token:
+          type: string
+
     Error:
+      type: object
+      required:
+        - code
+        - message
       properties:
         code:
           description: machine-readable string that can be used for customized error handling and monitoring
@@ -442,7 +464,3 @@ components:
           description: human, but not end-client text error message, can be used for extended logging
           type: string
           example: Invalid request. Error description will be returned in the response body
-      required:
-        - code
-        - message
-      type: object
