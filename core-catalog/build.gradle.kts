@@ -24,10 +24,10 @@ openApiGenerate {
     generatorName.set("kotlin-spring")
     inputSpec.set("$projectDir/src/main/resources/api/openapi.yaml")
     outputDir.set("$buildDir/generated")
-    apiPackage.set("com.example.api")
-    invokerPackage.set("com.example.invoker")
-    modelPackage.set("com.example.model")
-    configOptions.put("dateLibrary", "java8")
+    apiPackage.set("ru.openbook-ng.api")
+    invokerPackage.set("ru.openbook-ng.invoker")
+    modelPackage.set("ru.openbook-ng.model")
+    configOptions.put("dateLibrary", "java17")
 }
 
 // Включаем сгенерированный код в компиляцию

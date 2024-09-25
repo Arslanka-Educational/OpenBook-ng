@@ -1,0 +1,96 @@
+openapi: 3.0.1
+info:
+  title: Core-catalog
+  description: Core-catalog api
+  version: 0.0.1
+
+paths:
+
+  /v1/books/{bookId}:
+    get:
+      operationId: getBookById
+      tags: [ Books ]
+      parameters:
+        - name: bookId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID of the book.
+      responses:
+        200:
+          description: Book Details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookContentResponse'
+        404:
+          $ref: '#/components/responses/404'
+
+  /v1/books/name/{bookName}:
+    get:
+      operationId: getBookByName
+      tags: [ Books ]
+      parameters:
+        - name: bookName
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Name of the book.
+      responses:
+        200:
+          description: Book Details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookContentResponse'
+        404:
+          $ref: '#/components/responses/404'
+
+components:
+
+  responses:
+    '200':
+      description: Success
+    '204':
+      description: No Content
+    '404':
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+  schemas:
+    BookContentResponse:
+      type: object
+      required:
+        - id
+        - title
+        - author
+        - content
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        author:
+          type: string
+        content:
+          type: string
+
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          description: machine-readable string that can be used for customized error handling and monitoring
+          type: string
+          example: 'BadRequest'
+        message:
+          description: human, but not end-client text error message, can be used for extended logging
+          type: string
+          example: Invalid request. Error description will be returned in the response body

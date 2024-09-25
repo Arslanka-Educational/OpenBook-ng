@@ -1,0 +1,196 @@
+openapi: 3.0.1
+info:
+  title: Core-booking api
+  description: Core-booking api
+  version: 0.0.1
+
+paths:
+
+  /v1/booking/{bookId}/reservation:
+    post:
+      operationId: reserveBook
+      tags: [ Reservation ]
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyTokenHeader'
+        - $ref: '#/components/parameters/UIDHeader'
+        - in: path
+          name: bookId
+          required: true
+          schema:
+            type: string
+            format: uuid
+            nullable: false
+      responses:
+        200:
+          description: Book reservation response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookReservationResponse'
+        401:
+          $ref: '#/components/responses/401'
+        404:
+          $ref: '#/components/responses/404'
+
+  /v1/booking/reservation/{reservationId}:
+    get:
+      operationId: getReservationRequest
+      tags: [ Reservation ]
+      parameters:
+        - $ref: '#/components/parameters/UIDHeader'
+        - name: reservationId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID of the reservation request.
+      responses:
+        200:
+          description: Reservation request Details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookReservationRequestResponse'
+        401:
+          $ref: '#/components/responses/401'
+        404:
+          $ref: '#/components/responses/404'
+
+components:
+
+  parameters:
+
+    UIDHeader:
+      in: header
+      name: X-Uid
+      schema:
+        type: string
+        format: uuid
+        nullable: false
+      required: true
+
+    IdempotencyTokenHeader:
+      in: header
+      name: X-Idempotency-Token
+      schema:
+        type: string
+      required: true
+
+  responses:
+    '200':
+      description: Success
+    '401':
+      description: Authorization error (either passport auth or bank auth or they conflicts)
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    '404':
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+  schemas:
+    Uid:
+      description: Users' UUID
+      type: string
+      example: abcd1234-abcd-1234-abcd-1a2b3c4d
+
+    BookReservationResponse:
+      discriminator:
+        propertyName: status
+        mapping:
+          SUCCESS: '#/components/schemas/BookReservationSuccess'
+          FAILED: '#/components/schemas/BookReservationFailure'
+      oneOf:
+        - $ref: '#/components/schemas/BookReservationSuccess'
+        - $ref: '#/components/schemas/BookReservationFailure'
+
+    BookReservationSuccess:
+      type: object
+      required:
+        - status
+        - reservationId
+      properties:
+        status:
+          type: string
+          enum: [ SUCCESS ]
+        reservationId:
+          type: string
+
+    BookReservationFailure:
+      type: object
+      required:
+        - status
+        - reasonCode
+      properties:
+        status:
+          type: string
+          enum: [ FAILED ]
+        reasonCode:
+          type: string
+
+    BookReservationRequestResponse:
+      discriminator:
+        propertyName: status
+        mapping:
+          SUCCESS: '#/components/schemas/ReservationRequestSuccess'
+          FAILED: '#/components/schemas/ReservationRequestFailure'
+      oneOf:
+        - $ref: '#/components/schemas/ReservationRequestSuccess'
+        - $ref: '#/components/schemas/ReservationRequestFailure'
+
+    ReservationRequestSuccess:
+      type: object
+      required:
+        - status
+        - data
+      properties:
+        status:
+          type: string
+          enum: [ SUCCESS ]
+        data:
+          type: object
+          required:
+            - id
+            - bookId
+            - userId
+            - reservationStatus
+          properties:
+            id:
+              type: string
+            bookId:
+              type: string
+            userId:
+              type: string
+            reservationStatus:
+              type: string
+
+    ReservationRequestFailure:
+      type: object
+      required:
+        - satus
+        - reasonCode
+      properties:
+        status:
+          type: string
+          enum: [ FAILED ]
+        reasonCode:
+          type: string
+
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          description: machine-readable string that can be used for customized error handling and monitoring
+          type: string
+          example: 'BadRequest'
+        message:
+          description: human, but not end-client text error message, can be used for extended logging
+          type: string
+          example: Invalid request. Error description will be returned in the response body

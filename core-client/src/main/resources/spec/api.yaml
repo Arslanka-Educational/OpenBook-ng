@@ -1,0 +1,211 @@
+openapi: 3.0.1
+info:
+  title: Core-client
+  description: Core-client api
+  version: 0.0.1
+
+paths:
+
+  /v1/users/registration:
+    post:
+      operationId: registerUser
+      tags: [ Users ]
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyTokenHeader'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              title: UserRegisterRequest
+              type: object
+              additionalProperties: false
+              required:
+                - firstName
+                - lastName
+                - email
+                - password
+              properties:
+                firstName:
+                  type: string
+                lastName:
+                  type: string
+                email:
+                  $ref: '#/components/schemas/Email'
+                password:
+                  $ref: '#/components/schemas/Password'
+      responses:
+        200:
+          description: UserRegisterResponse
+          content:
+            application/json:
+              schema:
+                title: UserRegisterResponse
+                type: object
+                additionalProperties: false
+                required:
+                  - uid
+                properties:
+                  uid:
+                    $ref: '#/components/schemas/Uid'
+        401:
+          $ref: '#/components/responses/401'
+        404:
+          $ref: '#/components/responses/404'
+        409:
+          $ref: '#/components/responses/409'
+
+  /v1/users/info/{userId}:
+    get:
+      operationId: userInfo
+      tags: [ Users ]
+      parameters:
+        - $ref: '#/components/parameters/UIDPath'
+      responses:
+        200:
+          description: UserInfoResponse
+          content:
+            application/json:
+              schema:
+                title: UserInfoResponse
+                type: object
+                additionalProperties: false
+                required:
+                  - firstName
+                  - lastName
+                  - email
+                properties:
+                  firstName:
+                    type: string
+                  lastName:
+                    type: string
+                  email:
+                    $ref: '#/components/schemas/Email'
+        403:
+          $ref: '#/components/responses/403'
+        404:
+          $ref: '#/components/responses/404'
+
+  /v1/users/login:
+    post:
+      operationId: loginUser
+      tags: [ Users ]
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyTokenHeader'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JwtLoginResponse'
+      responses:
+        200:
+          $ref: '#/components/responses/200'
+        401:
+          $ref: '#/components/responses/401'
+        404:
+          $ref: '#/components/responses/404'
+
+
+components:
+
+  parameters:
+
+    UIDHeader:
+      in: header
+      name: X-Uid
+      schema:
+        type: string
+        format: uuid
+        nullable: false
+      required: true
+
+    UIDPath:
+      in: path
+      name: userId
+      schema:
+        type: string
+        format: uuid
+        nullable: false
+      required: true
+
+    IdempotencyTokenHeader:
+      in: header
+      name: X-Idempotency-Token
+      schema:
+        type: string
+      required: true
+
+  responses:
+    '200':
+      description: Success
+    '204':
+      description: No Content
+    '401':
+      description: Authorization error (either passport auth or bank auth or they conflicts)
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    '403':
+      description: Access forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    '404':
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    '409':
+      description: Duplicate request causing a conflict
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+  schemas:
+    Email:
+      description: Users' email address
+      nullable: false
+      format: email
+      type: string
+
+    Password:
+      description: Users' password
+      nullable: false
+      format: password
+      type: string
+
+    Uid:
+      description: Users' UUID
+      type: string
+      example: abcd1234-abcd-1234-abcd-1a2b3c4d
+
+    JwtLoginResponse:
+      type: object
+      required:
+        - access_token
+        - refresh_token
+      properties:
+        access_token:
+          type: string
+        refresh_token:
+          type: string
+
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          description: machine-readable string that can be used for customized error handling and monitoring
+          type: string
+          example: 'BadRequest'
+        message:
+          description: human, but not end-client text error message, can be used for extended logging
+          type: string
+          example: Invalid request. Error description will be returned in the response body

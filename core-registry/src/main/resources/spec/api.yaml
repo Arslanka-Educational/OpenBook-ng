@@ -1,0 +1,119 @@
+openapi: 3.0.1
+info:
+  title: Core-registry
+  description: Core-registry API
+  version: 0.0.1
+
+paths:
+
+  /v1/books:
+    get:
+      operationId: searchBooks
+      tags: [ Books ]
+      parameters:
+        - name: title
+          in: query
+          required: false
+          schema:
+            type: string
+            description: Title of the book.
+        - name: author
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Author of the book.
+        - $ref: '#/components/parameters/PageQuery'
+        - $ref: '#/components/parameters/PageSizeQuery'
+      responses:
+        200:
+          description: Search Results
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookSearchResponse'
+        404:
+          $ref: '#/components/responses/404'
+components:
+
+  parameters:
+
+    PageQuery:
+      in: query
+      name: page
+      schema:
+        type: integer
+        default: 1
+      required: false
+      description: Page number for pagination.
+
+    PageSizeQuery:
+      in: query
+      name: pageSize
+      schema:
+        type: integer
+        default: 10
+      required: false
+      description: Number of items per page for pagination.
+
+  responses:
+    '200':
+      description: Success
+    '404':
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+  schemas:
+    BookContentResponse:
+      type: object
+      required:
+        - id
+        - title
+        - author
+        - content
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        author:
+          type: string
+        content:
+          type: string
+
+    BookSearchResponse:
+      type: object
+      required:
+        - books
+        - currentPage
+      properties:
+        books:
+          type: array
+          items:
+            $ref: '#/components/schemas/BookContentResponse'
+        currentPage:
+          type: integer
+        pageSize:
+          type: integer
+        totalPages:
+          type: integer
+        totalItems:
+          type: integer
+
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          description: machine-readable string that can be used for customized error handling and monitoring
+          type: string
+          example: 'BadRequest'
+        message:
+          description: human, but not end-client text error message, can be used for extended logging
+          type: string
+          example: Invalid request. Error description will be returned in the response body
