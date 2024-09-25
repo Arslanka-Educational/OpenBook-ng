@@ -150,7 +150,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ReservationRequestResponse'
+                $ref: '#/components/schemas/BookReservationRequestResponse'
         401:
           $ref: '#/components/responses/401'
         404:
@@ -355,7 +355,7 @@ components:
         reasonCode:
           type: string
 
-    ReservationRequestResponse:
+    BookReservationRequestResponse:
       discriminator:
         propertyName: status
         mapping:
