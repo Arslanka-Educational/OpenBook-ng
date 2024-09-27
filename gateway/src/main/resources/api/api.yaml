@@ -22,16 +22,16 @@ paths:
               additionalProperties: false
               required:
                 - firstName
-                - lastName
                 - email
                 - password
+                - userType
               properties:
                 firstName:
                   type: string
-                lastName:
-                  type: string
                 email:
                   $ref: '#/components/schemas/Email'
+                userType:
+                  $ref: '#/components/schemas/UserType'
                 password:
                   $ref: '#/components/schemas/Password'
       responses:
@@ -72,39 +72,38 @@ paths:
                 additionalProperties: false
                 required:
                   - firstName
-                  - lastName
                   - email
                 properties:
                   firstName:
                     type: string
-                  lastName:
-                    type: string
                   email:
                     $ref: '#/components/schemas/Email'
+                  userType:
+                    $ref: '#/components/schemas/UserType'
         403:
           $ref: '#/components/responses/403'
         404:
           $ref: '#/components/responses/404'
-
-  /v1/users/login:
-    post:
-      operationId: loginUser
-      tags: [ Users ]
-      parameters:
-        - $ref: '#/components/parameters/IdempotencyTokenHeader'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/JwtLoginResponse'
-      responses:
-        200:
-          $ref: '#/components/responses/200'
-        401:
-          $ref: '#/components/responses/401'
-        404:
-          $ref: '#/components/responses/404'
+#
+#  /v1/users/login:
+#    post:
+#      operationId: loginUser
+#      tags: [ Users ]
+#      parameters:
+#        - $ref: '#/components/parameters/IdempotencyTokenHeader'
+#      requestBody:
+#        required: true
+#        content:
+#          application/json:
+#            schema:
+#              $ref: '#/components/schemas/JwtLoginResponse'
+#      responses:
+#        200:
+#          $ref: '#/components/responses/200'
+#        401:
+#          $ref: '#/components/responses/401'
+#        404:
+#          $ref: '#/components/responses/404'
 
   /v1/booking/{bookId}/reservation:
     post:
@@ -309,6 +308,13 @@ components:
       nullable: false
       format: email
       type: string
+    UserType:
+      type: string
+      description: Type of user
+      enum:
+        - client
+        - library
+        - moderator
 
     Password:
       description: Users' password
