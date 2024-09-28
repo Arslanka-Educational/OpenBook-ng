@@ -19,7 +19,6 @@ paths:
           schema:
             type: string
             format: uuid
-            nullable: false
       responses:
         200:
           description: Book reservation response
@@ -43,6 +42,7 @@ paths:
           required: true
           schema:
             type: string
+            format: uuid
           description: ID of the reservation request.
       responses:
         200:

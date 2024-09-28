@@ -17,6 +17,9 @@ dependencies {
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")
     implementation(kotlin("stdlib"))
+    implementation("io.klogging:klogging-jvm:0.7.2")
+    implementation("org.postgresql:postgresql:42.1.4")
+    implementation("org.springframework.boot:spring-boot-starter-jdbc:3.3.4")
     implementation("org.springframework.boot:spring-boot-starter-web:3.3.0")
     implementation("org.springframework.boot:spring-boot-starter-validation:3.3.0")
 }
