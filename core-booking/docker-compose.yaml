@@ -1,0 +1,33 @@
+services:
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: core-booking-master
+      POSTGRES_USER: core-booking-owner
+      POSTGRES_PASSWORD: core-booking-owner
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./src/main/resources/db:/docker-entrypoint-initdb.d
+    ports:
+      - "5432:5432"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/core-booking
+      SPRING_DATASOURCE_USERNAME: core-booking-owner
+      SPRING_DATASOURCE_PASSWORD: core-booking-owner
+    depends_on:
+      - postgres
+    ports:
+      - "8085:8080"
+
+volumes:
+  postgres_data:
