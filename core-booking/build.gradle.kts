@@ -18,8 +18,8 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter")
     implementation(kotlin("stdlib"))
     implementation("io.klogging:klogging-jvm:0.7.2")
-    implementation("org.postgresql:postgresql:42.1.4")
-    implementation("org.springframework.boot:spring-boot-starter-jdbc:3.3.4")
+    runtimeOnly("org.postgresql:postgresql")
+    implementation("org.springframework.boot:spring-boot-starter-data-jdbc:3.1.3")
     implementation("org.springframework.boot:spring-boot-starter-web:3.3.0")
     implementation("org.springframework.boot:spring-boot-starter-validation:3.3.0")
 }

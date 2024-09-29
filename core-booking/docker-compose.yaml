@@ -21,7 +21,7 @@ services:
       context: .
       dockerfile: Dockerfile
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/core-booking
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/core-booking-master
       SPRING_DATASOURCE_USERNAME: core-booking-owner
       SPRING_DATASOURCE_PASSWORD: core-booking-owner
     depends_on:
