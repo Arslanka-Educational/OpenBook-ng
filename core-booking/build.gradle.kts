@@ -51,6 +51,7 @@ openApiGenerate {
             "interfaceOnly" to "true",
             "skipDefaultInterface" to "true",
             "useTags" to "true",
+            "serializationLibrary" to "jackson",
         )
     )
     generateApiDocumentation.set(false)

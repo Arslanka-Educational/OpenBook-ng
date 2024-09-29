@@ -1,5 +1,6 @@
 package org.example.controller
 
+import ReservationService
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RestController
 import ru.openbook.api.ReservationApi
@@ -9,12 +10,18 @@ import java.util.UUID
 
 @RestController
 class ReservationController(
+    private val reservationService: ReservationService,
 ) : ReservationApi {
     override fun getReservationRequest(
         xUid: UUID,
-        reservationId: String,
+        reservationId: UUID,
     ): ResponseEntity<BookReservationRequestResponse> {
-        TODO()
+        return reservationService.getReservationRequest(
+            uid = xUid,
+            reservationId = reservationId,
+        ).let {
+            ResponseEntity.ok(it.toDto())
+        }
     }
 
     override fun reserveBook(

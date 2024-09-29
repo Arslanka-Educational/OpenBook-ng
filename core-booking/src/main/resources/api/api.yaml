@@ -93,92 +93,85 @@ components:
             $ref: '#/components/schemas/Error'
 
   schemas:
-    Uid:
-      description: Users' UUID
-      type: string
-      example: abcd1234-abcd-1234-abcd-1a2b3c4d
-
     BookReservationResponse:
+      type: object
       discriminator:
         propertyName: status
         mapping:
           SUCCESS: '#/components/schemas/BookReservationSuccess'
           FAILED: '#/components/schemas/BookReservationFailure'
-      oneOf:
-        - $ref: '#/components/schemas/BookReservationSuccess'
-        - $ref: '#/components/schemas/BookReservationFailure'
+      properties:
+        status:
+          $ref: '#/components/schemas/BookReservationStatus'
+      required:
+        - status
 
     BookReservationSuccess:
-      type: object
-      required:
-        - status
-        - reservationId
-      properties:
-        status:
-          type: string
-          enum: [ SUCCESS ]
-        reservationId:
-          type: string
+      allOf:
+        - $ref: '#/components/schemas/BookReservationResponse'
+        - type: object
+          required:
+            - reservationId
+          properties:
+            reservationId:
+              type: string
+              format: uuid
 
     BookReservationFailure:
-      type: object
-      required:
-        - status
-        - reasonCode
-      properties:
-        status:
-          type: string
-          enum: [ FAILED ]
-        reasonCode:
-          type: string
+      allOf:
+        - $ref: '#/components/schemas/BookReservationResponse'
+        - type: object
+          required:
+            - reasonCode
+          properties:
+            reasonCode:
+              type: string
+
+    BookReservationStatus:
+      type: string
+      enum: [ SUCCESS, FAILED ]
 
     BookReservationRequestResponse:
+      type: object
       discriminator:
         propertyName: status
         mapping:
           SUCCESS: '#/components/schemas/ReservationRequestSuccess'
           FAILED: '#/components/schemas/ReservationRequestFailure'
-      oneOf:
-        - $ref: '#/components/schemas/ReservationRequestSuccess'
-        - $ref: '#/components/schemas/ReservationRequestFailure'
-
-    ReservationRequestSuccess:
-      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/BookReservationStatus'
       required:
         - status
-        - data
-      properties:
-        status:
-          type: string
-          enum: [ SUCCESS ]
-        data:
-          type: object
+
+    ReservationRequestSuccess:
+      allOf:
+        - $ref: '#/components/schemas/BookReservationRequestResponse'
+        - type: object
           required:
-            - id
+            - reservationId
             - bookId
             - userId
-            - reservationStatus
           properties:
-            id:
+            reservationId:
               type: string
+              format: uuid
             bookId:
               type: string
+              format: uuid
             userId:
               type: string
-            reservationStatus:
-              type: string
+              format: uuid
 
     ReservationRequestFailure:
-      type: object
-      required:
-        - satus
-        - reasonCode
-      properties:
-        status:
-          type: string
-          enum: [ FAILED ]
-        reasonCode:
-          type: string
+      allOf:
+        - $ref: '#/components/schemas/BookReservationRequestResponse'
+        - type: object
+          required:
+            - reason
+          properties:
+            reason:
+              type: string
 
     Error:
       type: object
