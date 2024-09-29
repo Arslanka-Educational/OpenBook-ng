@@ -1,11 +1,11 @@
 package org.example.controller
 
-import ReservationService
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RestController
 import ru.openbook.api.ReservationApi
 import ru.openbook.model.BookReservationRequestResponse
 import ru.openbook.model.BookReservationResponse
+import org.example.service.ReservationService
 import java.util.UUID
 
 @RestController

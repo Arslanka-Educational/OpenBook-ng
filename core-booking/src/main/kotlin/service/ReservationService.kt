@@ -1,5 +1,8 @@
-import model.Reservation
+package org.example.service
+
 import org.example.controller.ApiException
+import org.example.model.Reservation
+import org.example.model.ReservationRepository
 import org.springframework.stereotype.Service
 import java.util.UUID
 import kotlin.jvm.Throws

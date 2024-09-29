@@ -1,6 +1,6 @@
 package org.example.controller
 
-import model.Reservation
+import org.example.model.Reservation
 import ru.openbook.model.BookReservationStatus
 import ru.openbook.model.ReservationRequestFailure
 import ru.openbook.model.ReservationRequestSuccess
