@@ -17,6 +17,9 @@ dependencies {
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")
     implementation(kotlin("stdlib"))
+    implementation("io.klogging:klogging-jvm:0.7.2")
+    runtimeOnly("org.postgresql:postgresql")
+    implementation("org.springframework.boot:spring-boot-starter-data-jdbc:3.1.3")
     implementation("org.springframework.boot:spring-boot-starter-web:3.3.0")
     implementation("org.springframework.boot:spring-boot-starter-validation:3.3.0")
 }
@@ -48,6 +51,7 @@ openApiGenerate {
             "interfaceOnly" to "true",
             "skipDefaultInterface" to "true",
             "useTags" to "true",
+            "serializationLibrary" to "jackson",
         )
     )
     generateApiDocumentation.set(false)
