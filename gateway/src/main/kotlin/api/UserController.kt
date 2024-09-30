@@ -40,11 +40,11 @@ class UserController(
 //        xIdempotencyToken: String,
         userRegisterRequest: UserRegisterRequest
     ): ResponseEntity<UserRegisterResponse> {
-         println(userRegisterRequest)
          return ResponseEntity.ok().body(UserRegisterResponse(userService.registerUser(userRegisterRequest).id.toString()))
     }
 
     override fun userInfo(userId: UUID): ResponseEntity<UserInfoResponse> {
+        return ResponseEntity.ok(UserInfoResponse("name", "email"))
         TODO("Not yet implemented")
     }
 }

@@ -26,6 +26,9 @@ spring:
     password: ${SPRING_DATASOURCE_PASSWORD}
     url: ${SPRING_DATASOURCE_URL}
     driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 10
+      connection-timeout: 30000
 
 
 rsa:
@@ -36,4 +39,6 @@ logging:
   level:
     org:
       springframework:
+        jdbc:
+          core: DEBUG
         web: DEBUG

@@ -1,10 +1,15 @@
 package org.example.repository
 
 import model.User
+import model.UserType
+import org.example.repository.util.mapUserType
+import org.springframework.jdbc.core.RowMapper
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.jdbc.core.namedparam.SqlParameterSource
 import org.springframework.stereotype.Repository
+import java.sql.ResultSet
+import java.util.*
 
 @Repository
 class UserRepository(
@@ -12,7 +17,7 @@ class UserRepository(
 ) {
     fun getByUsername(username: String): User? {
         val namedParameters: SqlParameterSource = MapSqlParameterSource("username", username)
-        return databaseClient.queryForObject(GET_BY_USERNAME, namedParameters, User::class.java)
+        return databaseClient.queryForObject(GET_BY_USERNAME, namedParameters, UserRowMapper())
     }
 
     fun registerUser(user: User) {
@@ -27,6 +32,18 @@ class UserRepository(
         )
 
         databaseClient.update(INSERT_USER, namedParameters)
+    }
+
+    class UserRowMapper : RowMapper<User> {
+        override fun mapRow(rs: ResultSet, rowNum: Int): User {
+            return User(
+                id = UUID.fromString(rs.getString("id")),
+                name = rs.getString("name"),
+                password = rs.getString("password"),
+                email = rs.getString("email"),
+                userType = mapUserType(rs.getString("user_type"))
+            )
+        }
     }
 
     private companion object {

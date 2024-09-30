@@ -22,9 +22,6 @@ import org.springframework.security.oauth2.jwt.JwtEncoder
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder
 import org.springframework.security.web.SecurityFilterChain
-import org.springframework.web.cors.CorsConfiguration
-import org.springframework.web.cors.CorsConfigurationSource
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 import java.security.interfaces.RSAPrivateKey
 import java.security.interfaces.RSAPublicKey
 
@@ -53,27 +50,9 @@ class WebSecurityConfig(
             .headers { header -> header.frameOptions { it.sameOrigin() } }
             .httpBasic { }
             .oauth2ResourceServer { it.jwt { } }
-            .cors {
-                it.configurationSource(
-                    corsConfigurationSource()
-                )
-            }
+            .cors { }
             .csrf { it.disable() }
         return http.build()
-    }
-
-    @Bean
-    fun corsConfigurationSource(): CorsConfigurationSource {
-        val corsConfiguration = CorsConfiguration().apply {
-            allowedOrigins = listOf("*") // Adjust this to your frontend URL in production
-            allowedMethods = listOf("GET", "POST", "PUT", "DELETE", "OPTIONS")
-            allowedHeaders = listOf("X-Idempotency-Token", "Authorization", "Content-Type")
-            exposedHeaders = listOf("X-Idempotency-Token")
-            allowCredentials = true
-        }
-        val source = UrlBasedCorsConfigurationSource()
-        source.registerCorsConfiguration("/**", corsConfiguration)
-        return source
     }
 
     @Bean
