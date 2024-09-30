@@ -4,8 +4,8 @@ CREATE TABLE IF NOT EXISTS reservations (
     id VARCHAR(255) PRIMARY KEY,
     user_id VARCHAR(255) NOT NULL,
     book_id VARCHAR(255) NOT NULL,
-    idempotency_token VARCHAR(255) NOT NULL,
-    created_at timestamptz  NOT NULL,
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL,
     status VARCHAR(50),
     reason VARCHAR(50),
     UNIQUE (id, user_id)
