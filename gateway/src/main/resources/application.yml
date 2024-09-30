@@ -1,6 +1,6 @@
 server:
   port: 8080
-#
+
 #external:
 #  core-booking:
 #    url: ${CORE_BOOKING_URL}
@@ -22,12 +22,18 @@ spring:
         - CLIENT
         - MODERATOR
   datasource:
-    username: ${SPRING_DATASOURCE_USERNAME}
-    password: ${SPRING_DATASOURCE_PASSWORD}
-    url: ${SPRING_DATASOURCE_URL}
+    url: jdbc:postgresql://localhost:5432/gateway-master #${SPRING_DATASOURCE_URL}
+    username: gateway-owner #${SPRING_DATASOURCE_USERNAME}
+    password: gateway-owner #${SPRING_DATASOURCE_PASSWORD}
     driver-class-name: org.postgresql.Driver
 
 
 rsa:
   public-key: classpath:certs/public.pem
   private-key: classpath:certs/private.pem
+
+logging:
+  level:
+    org:
+      springframework:
+        web: DEBUG

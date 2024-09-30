@@ -20,6 +20,8 @@ class AuthorizationUserDetailsService(
 ) : UserDetailsService {
     override fun loadUserByUsername(username: String): UserDetails = runBlocking {
         userRepository.getByUsername(username)
+            ?.let { println(it)
+            it}
             ?.let { AuthorizationUserDetails(it, userAuthorities) }
             ?: throw IllegalArgumentException("User with id $username doesn't exists")
     }

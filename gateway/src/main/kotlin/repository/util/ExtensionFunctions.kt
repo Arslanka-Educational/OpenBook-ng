@@ -16,5 +16,5 @@ fun UserRegisterRequest.toUser(passwordEncoder: PasswordEncoder) = User(
     name = this.firstName,
     password = passwordEncoder.encode(this.password),
     email = this.email,
-    userType = UserType.valueOf(this.userType.name),
+    userType = UserType.values().first{ it.typeName == this.userType.value },
 )

@@ -10,8 +10,8 @@ paths:
     post:
       operationId: registerUser
       tags: [ Users ]
-      parameters:
-        - $ref: '#/components/parameters/IdempotencyTokenHeader'
+#      parameters:
+#        - $ref: '#/components/parameters/IdempotencyTokenHeader'
       requestBody:
         required: true
         content:

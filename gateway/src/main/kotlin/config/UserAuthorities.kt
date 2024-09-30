@@ -3,8 +3,10 @@ package org.example.config
 import model.UserAuthority
 import model.UserType
 import org.springframework.boot.context.properties.ConfigurationProperties
+import org.springframework.stereotype.Component
 
-@ConfigurationProperties("spring.security")
-data class UserAuthorities (
-    val authorities: Map<UserType, List<UserAuthority>>
-)
+@Component
+@ConfigurationProperties(prefix = "spring.security")
+class UserAuthorities {
+    lateinit var authorities: Map<UserType, List<UserAuthority>>
+}

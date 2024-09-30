@@ -22,7 +22,7 @@ class UserRepository(
                 "username" to user.name,
                 "password" to user.password,
                 "email" to user.email,
-                "userType" to user.userType,
+                "user_type" to user.userType.typeName,
             )
         )
 
