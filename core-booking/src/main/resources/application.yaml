@@ -16,13 +16,3 @@ spring:
     pool-size: 5
   timeout:
     core-catalog-callback-timeout-millis: 60000
-  kafka:
-    consumer:
-      bootstrap-servers: ${SPRING_KAFKA_BOOTSTRAP_SERVERS}
-      group-id: your-group-id
-      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-  task-scheduler:
-    pool-size: 5
-  timeout:
-    core-catalog-callback-timeout-millis: 60000
