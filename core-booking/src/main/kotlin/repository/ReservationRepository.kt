@@ -19,9 +19,16 @@ class ReservationRepository(
             "SELECT id, user_id, book_id, created_at, updated_at, status, reason FROM reservations WHERE id = ? AND user_id = ? LIMIT 1"
         private const val INSERT_RESERVATION_REQUEST =
             "INSERT INTO reservations (id, user_id, book_id, created_at, updated_at, status, reason) VALUES (?, ?, ?, ?, ?, ?, ?)"
+        private const val UPDATE_RESERVATION_REQUEST_CHECK_STATUS =
+            """
+            UPDATE reservations 
+            SET updated_at = ?, status = ?, reason = ?
+            WHERE id = ? AND user_id = ? AND status = ?
+            RETURNING id, user_id, book_id, created_at, updated_at, status, reason;
+            """
     }
 
-    internal fun findReservationRequestById(id: UUID, uid: UUID): Reservation? {
+    internal fun findByIdAndUid(id: UUID, uid: UUID): Reservation? {
         return try {
             jdbcTemplate.queryForObject(
                 FIND_RESERVATION_REQUEST_BY_ID_AND_UID,
@@ -34,9 +41,7 @@ class ReservationRepository(
         }
     }
 
-    internal fun insertReservationRequest(
-        reservation: Reservation,
-    ): Reservation {
+    internal fun insertIfMissing(reservation: Reservation): Reservation {
         return try {
             jdbcTemplate.update { connection ->
                 val preparedStatement = connection.prepareStatement(INSERT_RESERVATION_REQUEST)
@@ -52,10 +57,31 @@ class ReservationRepository(
             }
             reservation
         } catch (e: DuplicateKeyException) {
-            findReservationRequestById(
+            findByIdAndUid(
                 id = reservation.id,
                 uid = reservation.userId,
             )!!
+        }
+    }
+
+    internal fun updateWithIdAndStatus(
+        reservation: Reservation,
+        expectedStatus: Reservation.ReservationStatus,
+    ): Reservation? {
+        return try {
+            jdbcTemplate.queryForObject(
+                UPDATE_RESERVATION_REQUEST_CHECK_STATUS,
+                ReservationRequestRowMapper,
+                reservation.updatedAt.let { Timestamp.from(it) },
+                reservation.status.toString(),
+                reservation.reason,
+
+                reservation.id.toString(),
+                reservation.userId.toString(),
+                expectedStatus.toString(),
+            )
+        } catch (e: EmptyResultDataAccessException) {
+            null
         }
     }
 

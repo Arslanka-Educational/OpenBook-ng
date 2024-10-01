@@ -6,3 +6,7 @@ spring:
     url: ${SPRING_DATASOURCE_URL}
     username: ${SPRING_DATASOURCE_USERNAME}
     password: ${SPRING_DATASOURCE_PASSWORD}
+  task-scheduler:
+    pool-size: 5
+  timeout:
+    core-catalog-callback-timeout-millis: 60000
