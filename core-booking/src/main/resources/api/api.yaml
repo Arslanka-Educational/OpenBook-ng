@@ -28,8 +28,6 @@ paths:
                 $ref: '#/components/schemas/BookReservationRequestResponse'
         401:
           $ref: '#/components/responses/401'
-        404:
-          $ref: '#/components/responses/404'
 
   /v1/booking/reservation/{reservationId}:
     get:

@@ -7,6 +7,7 @@ import org.springframework.jdbc.core.RowMapper
 import org.springframework.stereotype.Repository
 import java.sql.ResultSet
 import java.sql.SQLException
+import java.sql.Timestamp
 import java.util.UUID
 
 @Repository
@@ -35,22 +36,26 @@ class ReservationRepository(
 
     internal fun insertReservationRequest(
         reservation: Reservation,
-        onConflict: (e: DuplicateKeyException) -> Reservation,
     ): Reservation {
         return try {
-            jdbcTemplate.queryForObject(
-                INSERT_RESERVATION_REQUEST,
-                ReservationRequestRowMapper,
-                reservation.id.toString(),
-                reservation.userId.toString(),
-                reservation.bookId.toString(),
-                reservation.createdAt,
-                reservation.updatedAt,
-                reservation.status.toString(),
-                reservation.reason.toString()
-            )!!
+            jdbcTemplate.update { connection ->
+                val preparedStatement = connection.prepareStatement(INSERT_RESERVATION_REQUEST)
+                preparedStatement.setString(1, reservation.id.toString())
+                preparedStatement.setString(2, reservation.userId.toString())
+                preparedStatement.setString(3, reservation.bookId.toString())
+                preparedStatement.setTimestamp(4, Timestamp.from(reservation.createdAt))
+
+                preparedStatement.setTimestamp(5, Timestamp.from(reservation.updatedAt))
+                preparedStatement.setString(6, reservation.status.toString())
+                preparedStatement.setString(7, reservation.reason)
+                preparedStatement
+            }
+            reservation
         } catch (e: DuplicateKeyException) {
-            onConflict(e)
+            findReservationRequestById(
+                id = reservation.id,
+                uid = reservation.userId,
+            )!!
         }
     }
 

@@ -4,10 +4,8 @@ import org.example.controller.ApiException
 import org.example.model.Reservation
 import org.example.model.ReservationRepository
 import org.springframework.stereotype.Service
-import java.time.Clock
 import java.time.Instant
 import java.util.UUID
-import kotlin.jvm.Throws
 
 @Service
 class ReservationService(
@@ -37,14 +35,6 @@ class ReservationService(
                 updatedAt = now,
                 reason = null,
             ),
-            onConflict = { e ->
-                throw ApiException(
-                    code = "REQUEST_CONFLICT",
-                    message = "Reservation request with id: '$reservationId' was already created for user: '$uid' ",
-                    httpStatusCode = 409,
-                    cause = e
-                )
-            },
         )
     }
 }
