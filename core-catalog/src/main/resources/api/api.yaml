@@ -5,6 +5,25 @@ info:
   version: 0.0.1
 
 paths:
+  /v1/books/{bookId}/reservation:
+    post:
+      operationId: initializeBookReservation
+      tags: [ Books ]
+      parameters:
+        - name: bookId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: ID of the book.
+      responses:
+        200:
+          description:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BookContentResponse"
 
   /v1/books/{bookId}:
     get:
@@ -77,7 +96,7 @@ components:
           type: string
         author:
           type: string
-        content:
+        status:
           type: string
 
     Error:
