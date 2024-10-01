@@ -7,7 +7,6 @@ import org.springframework.scheduling.annotation.EnableScheduling
 
 @SpringBootApplication
 @EnableScheduling
-@EnableAsync
 class Application
 
 fun main(args: Array<String>) {

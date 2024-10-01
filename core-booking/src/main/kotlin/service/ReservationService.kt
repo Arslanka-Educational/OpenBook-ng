@@ -4,9 +4,8 @@ import org.example.controller.ApiException
 import org.example.model.Reservation
 import org.example.model.Reservation.ReservationStatus
 import org.example.model.ReservationRepository
-import org.springframework.scheduling.annotation.Async
-import org.springframework.scheduling.annotation.EnableAsync
-import org.springframework.scheduling.annotation.Scheduled
+import org.springframework.beans.factory.annotation.Value
+import org.springframework.scheduling.TaskScheduler
 import org.springframework.stereotype.Service
 import java.time.Instant
 import java.util.UUID
@@ -14,6 +13,9 @@ import java.util.UUID
 @Service
 class ReservationService(
     private val reservationRepository: ReservationRepository,
+    private val taskScheduler: TaskScheduler,
+    @Value("\${spring.timeout.core-catalog-callback-timeout-millis}")
+    private val tpsTimeoutMillis: Long,
 ) {
     @Throws(ApiException::class)
     internal fun getReservationRequest(uid: UUID, reservationId: UUID): Reservation {
@@ -48,13 +50,14 @@ class ReservationService(
             ),
             expectedStatus = ReservationStatus.NEW,
         )!!
-        onCoreCatalogTimeout(reservation)
+        taskScheduler.schedule(
+            { onCoreCatalogTimeout(reservation) },
+            Instant.now().plusMillis(tpsTimeoutMillis),
+        )
         return reservation
     }
 
-    @Async
-    @Scheduled(initialDelay = 100, fixedDelay = Long.MAX_VALUE)
-    internal fun onCoreCatalogTimeout(reservation: Reservation) {
+    private fun onCoreCatalogTimeout(reservation: Reservation) {
         if (reservation.status in listOf(ReservationStatus.SUCCESS, ReservationStatus.FAILED)) {
             return
         }
