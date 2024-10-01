@@ -9,12 +9,14 @@ services:
       - postgres_data:/var/lib/postgresql/data
       - ./src/main/resources/db:/docker-entrypoint-initdb.d
     ports:
-      - "5432:5432"
+      - "5433:5432"
     logging:
       driver: "json-file"
       options:
         max-size: "200k"
         max-file: "10"
+    networks:
+      - db-net
 
   app:
     build:
@@ -24,10 +26,20 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/core-booking-master
       SPRING_DATASOURCE_USERNAME: core-booking-owner
       SPRING_DATASOURCE_PASSWORD: core-booking-owner
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: host.docker.internal:9092
     depends_on:
       - postgres
     ports:
       - "8085:8080"
+    networks:
+      - kafka-net
+      - db-net
 
 volumes:
   postgres_data:
+
+networks:
+  db-net:
+  kafka-net:
+#    driver: bridge
+    external: true
