@@ -5,7 +5,7 @@ import com.nimbusds.jose.jwk.RSAKey
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet
 import com.nimbusds.jose.proc.SecurityContext
 import jakarta.servlet.http.HttpServletResponse
-import org.example.services.security.AuthorizationUserDetailsService
+import org.example.service.security.AuthorizationUserDetailsService
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration

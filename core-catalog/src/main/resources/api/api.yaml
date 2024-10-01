@@ -5,32 +5,53 @@ info:
   version: 0.0.1
 
 paths:
-  /v1/books/{bookId}/reservation:
+  /v1/books/{bookInstanceId}/reservation:
     post:
       operationId: initializeBookReservation
       tags: [ Books ]
       parameters:
-        - name: bookId
+        - name: bookInstanceId
           in: path
           required: true
           schema:
             type: string
             format: uuid
-          description: ID of the book.
+          description: ID of the book instance.
       responses:
         200:
           description:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/BookContentResponse"
+                $ref: '#/components/schemas/BookInstanceResponse'
 
-  /v1/books/{bookId}:
+  /v1/books/{bookContentId}/instances:
     get:
-      operationId: getBookById
+      operationId: getBookInstancesByBookContentId
       tags: [ Books ]
       parameters:
-        - name: bookId
+        - name: bookContentId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID of the book content.
+      responses:
+        200:
+          description: Book Instance
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BookInstanceResponse'
+
+  /v1/books/{bookContentId}:
+    get:
+      operationId: getBooksContentById
+      tags: [ Books ]
+      parameters:
+        - name: bookContentId
           in: path
           required: true
           schema:
@@ -42,28 +63,32 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/BookContentResponse'
+                type: array
+                items:
+                  $ref: '#/components/schemas/BookContentResponse'
         404:
           $ref: '#/components/responses/404'
 
-  /v1/books/name/{bookName}:
+  /v1/books/name/{title}:
     get:
-      operationId: getBookByName
+      operationId: getBookContentByTitle
       tags: [ Books ]
       parameters:
-        - name: bookName
+        - name: title
           in: path
           required: true
           schema:
             type: string
-          description: Name of the book.
+          description: Title of the book.
       responses:
         200:
           description: Book Details
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/BookContentResponse'
+                type: array
+                items:
+                  $ref: '#/components/schemas/BookContentResponse'
         404:
           $ref: '#/components/responses/404'
 
@@ -82,21 +107,35 @@ components:
             $ref: '#/components/schemas/Error'
 
   schemas:
+    BookInstanceResponse:
+      type: object
+      required:
+        - id
+        - bookContentId
+        - status
+      properties:
+        id:
+          type: string
+          format: uuid
+        bookContentId:
+          type: string
+          format: uuid
+        status:
+          type: string
+
     BookContentResponse:
       type: object
       required:
         - id
         - title
         - author
-        - content
       properties:
         id:
           type: string
+          format: uuid
         title:
           type: string
         author:
-          type: string
-        status:
           type: string
 
     Error:
