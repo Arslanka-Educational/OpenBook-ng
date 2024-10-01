@@ -1,8 +1,8 @@
 package org.example.api
 
 import model.AuthorizationUserDetails
-import org.example.services.security.AuthorizationUserDetailsService
-import org.example.services.security.JwtService
+import org.example.service.security.AuthorizationUserDetailsService
+import org.example.service.security.JwtService
 import org.springframework.http.ResponseEntity
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.core.Authentication
@@ -39,7 +39,7 @@ class UserController(
     }
 
     override fun userInfo(userId: UUID): ResponseEntity<UserInfoResponse> {
-        return ResponseEntity.ok(UserInfoResponse("name", "email"))
+//        return ResponseEntity.ok(UserInfoResponse("name", "email"))
         TODO("Not yet implemented")
     }
 }
