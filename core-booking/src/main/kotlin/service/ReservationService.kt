@@ -4,8 +4,8 @@ import org.example.controller.ApiException
 import org.example.model.Reservation
 import org.example.model.ReservationRepository
 import org.springframework.stereotype.Service
+import java.time.Instant
 import java.util.UUID
-import kotlin.jvm.Throws
 
 @Service
 class ReservationService(
@@ -20,6 +20,21 @@ class ReservationService(
             code = "RESERVATION_REQUEST_NOT_FOUND",
             message = "Reservation request with id: '$reservationId' wasn't found",
             httpStatusCode = 404,
+        )
+    }
+
+    internal fun reserveBook(uid: UUID, reservationId: UUID, bookId: UUID): Reservation {
+        val now = Instant.now()
+        return reservationRepository.insertReservationRequest(
+            reservation = Reservation(
+                id = reservationId,
+                userId = uid,
+                bookId = bookId,
+                status = Reservation.ReservationStatus.NEW,
+                createdAt = now,
+                updatedAt = now,
+                reason = null,
+            ),
         )
     }
 }
