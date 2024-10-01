@@ -1,14 +1,11 @@
 package org.example.api
 
 import model.AuthorizationUserDetails
-import org.example.model.LoginRequest
 import org.example.services.security.AuthorizationUserDetailsService
 import org.example.services.security.JwtService
 import org.springframework.http.ResponseEntity
 import org.springframework.security.authentication.AuthenticationManager
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
-import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RestController
@@ -18,7 +15,6 @@ import ru.openbook.model.UserRegisterRequest
 import ru.openbook.model.UserRegisterResponse
 import java.util.*
 
-//@RequestMapping("\${api.base-path:}")
 @RestController
 class UserController(
     private val userService: AuthorizationUserDetailsService,
@@ -37,7 +33,6 @@ class UserController(
     }
 
      override fun registerUser(
-//        xIdempotencyToken: String,
         userRegisterRequest: UserRegisterRequest
     ): ResponseEntity<UserRegisterResponse> {
          return ResponseEntity.ok().body(UserRegisterResponse(userService.registerUser(userRegisterRequest).id.toString()))

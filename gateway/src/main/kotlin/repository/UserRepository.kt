@@ -1,7 +1,6 @@
 package org.example.repository
 
 import model.User
-import model.UserType
 import org.example.repository.util.mapUserType
 import org.springframework.jdbc.core.RowMapper
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource

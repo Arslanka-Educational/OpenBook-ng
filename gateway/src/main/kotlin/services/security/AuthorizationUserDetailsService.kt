@@ -1,6 +1,5 @@
 package org.example.services.security
 
-import kotlinx.coroutines.runBlocking
 import model.AuthorizationUserDetails
 import model.User
 import org.example.config.UserAuthorities
@@ -19,16 +18,13 @@ class AuthorizationUserDetailsService(
     private val userAuthorities: UserAuthorities,
     private val passwordEncoder: PasswordEncoder,
 ) : UserDetailsService {
+
     override fun loadUserByUsername(username: String): UserDetails {
         try {
-            println(userAuthorities.authorities.entries)
-            val user = userRepository.getByUsername(username)
-            println("User: $user")
-            return user
+            return userRepository.getByUsername(username)
                 ?.let {
                     AuthorizationUserDetails(it, userAuthorities) }
                 ?: throw IllegalArgumentException("User with id $username doesn't exists")
-
         } catch (e: Exception) {
             e.printStackTrace()
             throw e
