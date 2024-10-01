@@ -1,4 +1,4 @@
-package org.example.services.security
+package org.example.service.security
 
 import model.AuthorizationUserDetails
 import model.User
