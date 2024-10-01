@@ -22,3 +22,7 @@ spring:
       group-id: your-group-id
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+  task-scheduler:
+    pool-size: 5
+  timeout:
+    core-catalog-callback-timeout-millis: 60000
