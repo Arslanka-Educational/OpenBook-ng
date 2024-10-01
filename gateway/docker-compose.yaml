@@ -1,0 +1,33 @@
+services:
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: gateway-master
+      POSTGRES_USER: gateway-owner
+      POSTGRES_PASSWORD: gateway-owner
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./src/main/resources/db:/docker-entrypoint-initdb.d
+    ports:
+      - "5432:5432"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/gateway-master
+      SPRING_DATASOURCE_USERNAME: gateway-owner
+      SPRING_DATASOURCE_PASSWORD: gateway-owner
+    depends_on:
+      - postgres
+    ports:
+      - "8080:8080"
+
+volumes:
+  postgres_data:
