@@ -31,7 +31,7 @@ class ReservationService(
 
     internal fun reserveBook(uid: UUID, reservationId: UUID, bookId: UUID): Reservation {
         val now = Instant.now()
-        var reservation = reservationRepository.insertIfMissing(
+        val reservation = reservationRepository.insertIfMissing(
             reservation = Reservation(
                 id = reservationId,
                 userId = uid,
@@ -42,6 +42,25 @@ class ReservationService(
                 reason = null,
             ),
         )
+
+        taskScheduler.schedule(
+            { scheduleCatalogReservationIfNew(reservation) },
+            Instant.now(),
+        )
+        return reservation
+    }
+
+    private fun scheduleCatalogReservationIfNew(originalReservation: Reservation) {
+        if (originalReservation.status in listOf(
+                ReservationStatus.IN_PROGRESS,
+                ReservationStatus.SUCCESS,
+                ReservationStatus.FAILED,
+            )
+        ) {
+            return
+        }
+
+        var reservation = originalReservation
         //TODO (core-catalog call with kafka notification)
         reservation = reservationRepository.updateWithIdAndStatus(
             reservation = reservation.copy(
@@ -54,7 +73,6 @@ class ReservationService(
             { onCoreCatalogTimeout(reservation) },
             Instant.now().plusMillis(tpsTimeoutMillis),
         )
-        return reservation
     }
 
     private fun onCoreCatalogTimeout(reservation: Reservation) {
