@@ -2,7 +2,11 @@ package org.example.service
 
 import org.example.controller.ApiException
 import org.example.model.Reservation
+import org.example.model.Reservation.ReservationStatus
 import org.example.model.ReservationRepository
+import org.springframework.scheduling.annotation.Async
+import org.springframework.scheduling.annotation.EnableAsync
+import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import java.time.Instant
 import java.util.UUID
@@ -13,7 +17,7 @@ class ReservationService(
 ) {
     @Throws(ApiException::class)
     internal fun getReservationRequest(uid: UUID, reservationId: UUID): Reservation {
-        return reservationRepository.findReservationRequestById(
+        return reservationRepository.findByIdAndUid(
             id = reservationId,
             uid = uid,
         ) ?: throw ApiException(
@@ -25,16 +29,46 @@ class ReservationService(
 
     internal fun reserveBook(uid: UUID, reservationId: UUID, bookId: UUID): Reservation {
         val now = Instant.now()
-        return reservationRepository.insertReservationRequest(
+        var reservation = reservationRepository.insertIfMissing(
             reservation = Reservation(
                 id = reservationId,
                 userId = uid,
                 bookId = bookId,
-                status = Reservation.ReservationStatus.NEW,
+                status = ReservationStatus.NEW,
                 createdAt = now,
                 updatedAt = now,
                 reason = null,
             ),
         )
+        //TODO (core-catalog call with kafka notification)
+        reservation = reservationRepository.updateWithIdAndStatus(
+            reservation = reservation.copy(
+                status = ReservationStatus.IN_PROGRESS,
+                updatedAt = Instant.now(),
+            ),
+            expectedStatus = ReservationStatus.NEW,
+        )!!
+        onCoreCatalogTimeout(reservation)
+        return reservation
+    }
+
+    @Async
+    @Scheduled(initialDelay = 100, fixedDelay = Long.MAX_VALUE)
+    internal fun onCoreCatalogTimeout(reservation: Reservation) {
+        if (reservation.status in listOf(ReservationStatus.SUCCESS, ReservationStatus.FAILED)) {
+            return
+        }
+
+        val reason = "Core-catalog timeout"
+        val now = Instant.now()
+
+        reservationRepository.updateWithIdAndStatus(
+            reservation = reservation.copy(
+                status = ReservationStatus.FAILED,
+                updatedAt = now,
+                reason = reason,
+            ),
+            expectedStatus = ReservationStatus.IN_PROGRESS,
+        )!!
     }
 }
