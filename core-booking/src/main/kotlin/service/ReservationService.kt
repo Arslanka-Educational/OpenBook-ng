@@ -1,6 +1,6 @@
 package org.example.service
 
-import RetryableTaskScheduler
+import org.example.service.schedule.RetryableTaskScheduler
 import org.example.controller.ApiException
 import org.example.model.Reservation
 import org.example.model.Reservation.ReservationStatus
@@ -72,10 +72,12 @@ class ReservationService(
         var reservation = originalReservation
         //TODO (core-catalog call with kafka notification)
         reservation = reservationRepository.updateWithIdAndStatus(
-            reservation = reservation.copy(
-                status = ReservationStatus.IN_PROGRESS,
-                updatedAt = Instant.now(),
-            ),
+            id = reservation.id,
+            uid = reservation.userId,
+            bookId = reservation.bookId,
+            status = ReservationStatus.IN_PROGRESS,
+            updatedAt = Instant.now(),
+            reason = null,
             expectedStatus = ReservationStatus.NEW,
         )!!
         taskScheduler.scheduleWithRetry(
@@ -94,11 +96,12 @@ class ReservationService(
         val now = Instant.now()
 
         reservationRepository.updateWithIdAndStatus(
-            reservation = reservation.copy(
-                status = ReservationStatus.FAILED,
-                updatedAt = now,
-                reason = reason,
-            ),
+            id = reservation.id,
+            uid = reservation.userId,
+            bookId = reservation.bookId,
+            status = ReservationStatus.FAILED,
+            updatedAt = now,
+            reason = reason,
             expectedStatus = ReservationStatus.IN_PROGRESS,
         )!!.also {
             logger.info("Updated reservation to FAILED due to core catalog timeout: $it")

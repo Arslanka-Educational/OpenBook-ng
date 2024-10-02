@@ -16,6 +16,7 @@ class SchedulerConfig(
         val taskScheduler = ThreadPoolTaskScheduler()
         taskScheduler.poolSize = this.poolSize
         taskScheduler.isRemoveOnCancelPolicy = true
+        taskScheduler.threadNamePrefix = "TaskScheduler-"
         return taskScheduler
     }
 }
