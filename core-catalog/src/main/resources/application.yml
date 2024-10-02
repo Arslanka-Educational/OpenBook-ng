@@ -14,7 +14,8 @@ spring:
   kafka:
     bootstrap-servers: ${SPRING_KAFKA_BOOTSTRAP_SERVERS} #localhost:9092
     producer:
-      topic: core-catalog-reservations
+      topic:
+        name: core-catalog-reservations
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.apache.kafka.common.serialization.StringSerializer
 

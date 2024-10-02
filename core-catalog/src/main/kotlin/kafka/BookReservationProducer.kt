@@ -8,15 +8,14 @@ import org.springframework.stereotype.Service
 @Service
 class BookReservationProducer(
     private val kafkaTemplate: KafkaTemplate<String, BookInstance>,
-//    @Value("\${spring.kafka.producer.topic.name}")
-//    private val topic: String,
+    @Value("\${spring.kafka.producer.topic.name}") private val topic: String,
 ) {
 
     fun sendMessage(bookInstance: BookInstance) {
-        kafkaTemplate.send(BOOK_RESERVATION_TOPIC, bookInstance.id.toString(), bookInstance)
+        kafkaTemplate.send(topic, bookInstance.id.toString(), bookInstance)
     }
 
     private companion object {
-        const val BOOK_RESERVATION_TOPIC = "core-catalog-reservations"
+//        const val BOOK_RESERVATION_TOPIC = "core-catalog-reservations"
     }
 }
