@@ -18,7 +18,7 @@ services:
     networks:
       - db-net
 
-  app:
+  core-booking-1:
     build:
       context: .
       dockerfile: Dockerfile
@@ -34,6 +34,39 @@ services:
     networks:
       - kafka-net
       - db-net
+
+  core-booking-2:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/core-booking-master
+      SPRING_DATASOURCE_USERNAME: core-booking-owner
+      SPRING_DATASOURCE_PASSWORD: core-booking-owner
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+    depends_on:
+      - postgres
+    ports:
+      - "8086:8080"
+    networks:
+      - kafka-net
+      - db-net
+  
+  balancer:
+    image: nginx
+    volumes:
+      - type: bind
+        source: ./nginx/nginx.conf
+        target: /etc/nginx/conf.d/default.conf
+        read_only: true
+    ports:
+      - "80:80"
+    depends_on:
+      - core-booking-1
+      - core-booking-2
+    networks:
+      - db-net
+      - kafka-net
 
 volumes:
   postgres_data:
