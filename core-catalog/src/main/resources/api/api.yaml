@@ -117,8 +117,12 @@ components:
       type: object
       required:
         - external_id
+        - user_id
       properties:
         external_id:
+          type: string
+          format: uuid
+        user_id:
           type: string
           format: uuid
 

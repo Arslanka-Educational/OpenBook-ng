@@ -166,7 +166,13 @@ paths:
           schema:
             type: string
             format: uuid
-          description: ID of the book instance.
+          description: ID of the book instance
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BookReservationInitializationRequest'
       responses:
         200:
           description:
@@ -371,6 +377,19 @@ components:
       description: Users' UUID
       type: string
       example: abcd1234-abcd-1234-abcd-1a2b3c4d
+
+    BookReservationInitializationRequest:
+      type: object
+      required:
+        - external_id
+        - user_id
+      properties:
+        external_id:
+          type: string
+          format: uuid
+        user_id:
+          type: string
+          format: uuid
 
     BookReservationResponse:
       discriminator:

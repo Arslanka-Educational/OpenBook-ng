@@ -13,5 +13,4 @@ data class BookInstance(
         bookContentId = this.bookContentId,
         status = this.status.name
     )
-
 }

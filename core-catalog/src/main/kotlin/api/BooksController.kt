@@ -24,7 +24,7 @@ class BooksController(
         bookInstanceId: UUID,
         bookReservationInitializationRequest: BookReservationInitializationRequest
     ): ResponseEntity<BookInstanceResponse> {
-        val bookInstance: BookInstance? = bookInstanceService.initializeBookInstanceReservation(bookInstanceId)
+        val bookInstance: BookInstance? = bookInstanceService.initializeBookInstanceReservation(bookInstanceId, bookReservationInitializationRequest)
         return bookInstance?.let {
             ResponseEntity.ok(bookInstance.mapToResponse())
         } ?: ResponseEntity.notFound().build();
