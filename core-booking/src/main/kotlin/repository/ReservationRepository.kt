@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository
 import java.sql.ResultSet
 import java.sql.SQLException
 import java.sql.Timestamp
+import java.time.Instant
 import java.util.UUID
 
 @Repository
@@ -23,7 +24,7 @@ class ReservationRepository(
             """
             UPDATE reservations 
             SET updated_at = ?, status = ?, reason = ?
-            WHERE id = ? AND user_id = ? AND status = ?
+            WHERE id = ? AND user_id = ? AND book_id = ? AND status = ?
             RETURNING id, user_id, book_id, created_at, updated_at, status, reason;
             """
     }
@@ -65,19 +66,25 @@ class ReservationRepository(
     }
 
     internal fun updateWithIdAndStatus(
-        reservation: Reservation,
+        id: UUID,
+        uid: UUID,
+        bookId: UUID,
+        updatedAt: Instant,
+        status: Reservation.ReservationStatus,
+        reason: String?,
         expectedStatus: Reservation.ReservationStatus,
     ): Reservation? {
         return try {
             jdbcTemplate.queryForObject(
                 UPDATE_RESERVATION_REQUEST_CHECK_STATUS,
                 ReservationRequestRowMapper,
-                reservation.updatedAt.let { Timestamp.from(it) },
-                reservation.status.toString(),
-                reservation.reason,
+                updatedAt.let { Timestamp.from(it) },
+                status.toString(),
+                reason,
 
-                reservation.id.toString(),
-                reservation.userId.toString(),
+                id.toString(),
+                uid.toString(),
+                bookId.toString(),
                 expectedStatus.toString(),
             )
         } catch (e: EmptyResultDataAccessException) {

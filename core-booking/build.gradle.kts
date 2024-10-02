@@ -22,7 +22,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jdbc:3.1.3")
     implementation("org.springframework.boot:spring-boot-starter-web:3.3.0")
     implementation("org.springframework.boot:spring-boot-starter-validation:3.3.0")
-
+    implementation("org.springframework.boot:spring-boot-starter-logging")
     implementation("org.springframework.kafka:spring-kafka")
 
 }
