@@ -29,7 +29,9 @@ spring:
     hikari:
       maximum-pool-size: 10
       connection-timeout: 30000
-
+  clients:
+    core-booking:
+      host: http://localhost:8085
 
 rsa:
   public-key: classpath:certs/public.pem

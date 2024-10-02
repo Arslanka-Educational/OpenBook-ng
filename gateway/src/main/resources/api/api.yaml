@@ -118,18 +118,15 @@ paths:
           schema:
             type: string
             format: uuid
-            nullable: false
       responses:
         200:
           description: Book reservation response
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/BookReservationResponse'
+                $ref: '#/components/schemas/BookReservationRequestResponse'
         401:
           $ref: '#/components/responses/401'
-        404:
-          $ref: '#/components/responses/404'
 
   /v1/booking/reservation/{reservationId}:
     get:
@@ -142,6 +139,7 @@ paths:
           required: true
           schema:
             type: string
+            format: uuid
           description: ID of the reservation request.
       responses:
         200:
@@ -323,6 +321,7 @@ components:
       name: X-Idempotency-Token
       schema:
         type: string
+        format: uuid
       required: true
 
     PageQuery:
@@ -411,87 +410,71 @@ components:
           type: string
           format: uuid
 
-    BookReservationResponse:
-      discriminator:
-        propertyName: status
-        mapping:
-          SUCCESS: '#/components/schemas/BookReservationSuccess'
-          FAILED: '#/components/schemas/BookReservationFailure'
-      oneOf:
-        - $ref: '#/components/schemas/BookReservationSuccess'
-        - $ref: '#/components/schemas/BookReservationFailure'
-
-    BookReservationSuccess:
-      type: object
-      required:
-        - status
-        - reservationId
-      properties:
-        status:
-          type: string
-          enum: [ SUCCESS ]
-        reservationId:
-          type: string
-
-    BookReservationFailure:
-      type: object
-      required:
-        - status
-        - reasonCode
-      properties:
-        status:
-          type: string
-          enum: [ FAILED ]
-        reasonCode:
-          type: string
+    BookReservationStatus:
+      type: string
+      enum: [ SUCCESS, FAILED, IN_PROGRESS ]
 
     BookReservationRequestResponse:
+      type: object
       discriminator:
         propertyName: status
         mapping:
           SUCCESS: '#/components/schemas/ReservationRequestSuccess'
           FAILED: '#/components/schemas/ReservationRequestFailure'
-      oneOf:
-        - $ref: '#/components/schemas/ReservationRequestSuccess'
-        - $ref: '#/components/schemas/ReservationRequestFailure'
-
-    ReservationRequestSuccess:
-      type: object
+          IN_PROGRESS: '#/components/schemas/ReservationRequestProcessing'
+      properties:
+        status:
+          $ref: '#/components/schemas/BookReservationStatus'
       required:
         - status
-        - data
-      properties:
-        status:
-          type: string
-          enum: [ SUCCESS ]
-        data:
-          type: object
+
+    ReservationRequestSuccess:
+      allOf:
+        - $ref: '#/components/schemas/BookReservationRequestResponse'
+        - type: object
           required:
-            - id
+            - reservationId
             - bookId
             - userId
-            - reservationStatus
           properties:
-            id:
+            reservationId:
               type: string
+              format: uuid
             bookId:
               type: string
+              format: uuid
             userId:
               type: string
-            reservationStatus:
-              type: string
+              format: uuid
 
     ReservationRequestFailure:
-      type: object
-      required:
-        - satus
-        - reasonCode
-      properties:
-        status:
-          type: string
-          enum: [ FAILED ]
-        reasonCode:
-          type: string
+      allOf:
+        - $ref: '#/components/schemas/BookReservationRequestResponse'
+        - type: object
+          required:
+            - reason
+          properties:
+            reason:
+              type: string
+
+    ReservationRequestProcessing:
+      allOf:
+        - $ref: '#/components/schemas/BookReservationRequestResponse'
+        - type: object
+          required:
+            - reservationId
+            - bookId
+            - userId
+          properties:
+            reservationId:
+              type: string
+              format: uuid
+            bookId:
+              type: string
+              format: uuid
+            userId:
+              type: string
+              format: uuid
 
     BookInstanceResponse:
       type: object
