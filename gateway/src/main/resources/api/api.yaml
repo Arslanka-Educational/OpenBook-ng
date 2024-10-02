@@ -166,7 +166,13 @@ paths:
           schema:
             type: string
             format: uuid
-          description: ID of the book instance.
+          description: ID of the book instance
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BookReservationInitializationRequest'
       responses:
         200:
           description:
@@ -195,6 +201,26 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/BookInstanceResponse'
+    post:
+      operationId: postBookInstance
+      tags: [ Books ]
+      parameters:
+        - name: bookContentId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Id of a book content
+      responses:
+        201:
+          description: Book instance created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookInstanceResponse'
+        404:
+          $ref: '#/components/responses/404'
 
   /v1/books/{bookContentId}:
     get:
@@ -371,6 +397,19 @@ components:
       description: Users' UUID
       type: string
       example: abcd1234-abcd-1234-abcd-1a2b3c4d
+
+    BookReservationInitializationRequest:
+      type: object
+      required:
+        - external_id
+        - user_id
+      properties:
+        external_id:
+          type: string
+          format: uuid
+        user_id:
+          type: string
+          format: uuid
 
     BookReservationResponse:
       discriminator:

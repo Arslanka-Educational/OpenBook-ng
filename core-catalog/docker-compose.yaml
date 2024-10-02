@@ -9,19 +9,21 @@ services:
       - postgres_data:/var/lib/postgresql/data
       - ./src/main/resources/db:/docker-entrypoint-initdb.d
     ports:
-      - "5432:5436"
+      - "5432:5432"
     logging:
       driver: "json-file"
       options:
         max-size: "200k"
         max-file: "10"
+    networks:
+      - db-net
 
   app:
     build:
       context: .
       dockerfile: Dockerfile
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5436/core-catalog-master
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/core-catalog-master
       SPRING_DATASOURCE_USERNAME: core-catalog-owner
       SPRING_DATASOURCE_PASSWORD: core-catalog-owner
       SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
@@ -31,6 +33,7 @@ services:
     ports:
       - "8087:8081"
     networks:
+      - db-net
       - kafka-net
 
   zookeeper:
@@ -63,5 +66,8 @@ volumes:
   postgres_data:
 
 networks:
+  db-net:
+    driver: bridge
   kafka-net:
     external: true
+
