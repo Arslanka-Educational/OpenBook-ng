@@ -26,20 +26,20 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/core-booking-master
       SPRING_DATASOURCE_USERNAME: core-booking-owner
       SPRING_DATASOURCE_PASSWORD: core-booking-owner
-      #SPRING_KAFKA_BOOTSTRAP_SERVERS: host.docker.internal:9092
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: host.docker.internal:9092
     depends_on:
       - postgres
     ports:
       - "8085:8080"
     networks:
-      #- kafka-net
+      - kafka-net
       - db-net
-    # extra_hosts:
-    #   - "host.docker.internal:host-gateway"
+    extra_hosts:
+     - "host.docker.internal:host-gateway"
 
 volumes:
   postgres_data:
 
 networks:
   db-net:
-  #kafka-net:
+  kafka-net:
