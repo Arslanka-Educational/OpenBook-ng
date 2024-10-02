@@ -15,7 +15,7 @@ class CoreCatalogEventsListener(
     private val objectMapper: ObjectMapper,
 ) {
 
-    @KafkaListener(topics = ["\${spring.kafka.topic.name}"], groupId = "\${spring.kafka.consumer.group-id}")
+    @KafkaListener(topics = ["\${spring.kafka.consumer.topic.name}"], groupId = "\${spring.kafka.consumer.group-id}")
     internal fun consume(message: String) {
         val reservationEvent: ReservationEvent = objectMapper.readValue(message, ReservationEvent::class.java)
 

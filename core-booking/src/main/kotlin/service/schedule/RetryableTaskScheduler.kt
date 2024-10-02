@@ -1,13 +1,16 @@
+package org.example.service.schedule
+
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.scheduling.TaskScheduler
-import org.springframework.stereotype.Service
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler
+import org.springframework.stereotype.Component
 import java.time.Instant
 import java.util.concurrent.ScheduledFuture
 
-@Service
+@Component
 class RetryableTaskScheduler(
-    private val taskScheduler: TaskScheduler,
+    private val taskScheduler: ThreadPoolTaskScheduler,
     @Value("\${spring.retry.max-attempts}")
     private val maxAttempts: Int,
     @Value("\${spring.retry.delay-between-retries-millis}")
