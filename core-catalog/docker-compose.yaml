@@ -53,7 +53,6 @@ services:
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'true'
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-      KAFKA_INTER_BROKER_LISTENER_NAME: INSIDE
     depends_on:
       - zookeeper
     networks:
@@ -64,3 +63,4 @@ volumes:
 
 networks:
   kafka-net:
+    external: true
