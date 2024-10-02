@@ -11,6 +11,7 @@ import ru.openbook.model.UserRegisterRequest
 import org.example.repository.UserRepository
 import java.util.*
 import org.example.repository.util.toUser
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class AuthorizationUserDetailsService(
@@ -31,6 +32,7 @@ class AuthorizationUserDetailsService(
         }
     }
 
+    @Transactional
     fun registerUser(userRegisterRequest: UserRegisterRequest): User {
         val user = userRegisterRequest.toUser(passwordEncoder)
             .copy(id = UUID.randomUUID())
