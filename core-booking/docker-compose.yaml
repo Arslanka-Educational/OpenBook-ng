@@ -34,8 +34,6 @@ services:
     networks:
       - kafka-net
       - db-net
-    extra_hosts:
-     - "host.docker.internal:host-gateway"
 
 volumes:
   postgres_data:
