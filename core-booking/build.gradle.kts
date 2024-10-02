@@ -23,6 +23,8 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web:3.3.0")
     implementation("org.springframework.boot:spring-boot-starter-validation:3.3.0")
     implementation("org.springframework.boot:spring-boot-starter-logging")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
     implementation("org.springframework.kafka:spring-kafka")
 
 }
