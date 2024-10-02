@@ -17,8 +17,8 @@ class CoreCatalogEventsListener(
 
     @KafkaListener(topics = ["\${spring.kafka.consumer.topic.name}"], groupId = "\${spring.kafka.consumer.group-id}")
     internal fun resolvedReservationStatus(message: String) {
+        println("======CONSUMED A MESSAGE $message")
         val reservationEvent: ReservationEvent = objectMapper.readValue(message, ReservationEvent::class.java)
-
         val updatedStatus = when (reservationEvent.status) {
             "SUCCESS" -> Reservation.ReservationStatus.SUCCESS
             "FAILED" -> Reservation.ReservationStatus.FAILED

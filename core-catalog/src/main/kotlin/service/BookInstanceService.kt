@@ -23,8 +23,8 @@ class BookInstanceService(
     ): BookInstance? {
         val bookInstance: BookInstance = bookInstanceRepository.getBookInstance(bookInstanceId) ?: return null
 
-        bookInstance.status = BookStatus.RESERVED
-        bookInstanceRepository.persist(bookInstance)
+        bookInstance.status = BookStatus.SUCCESS
+        bookInstanceRepository.update(bookInstance)
 
         val reservationEvent = ReservationEvent(
             id = bookReservationInitializationRequest.externalId,
@@ -35,6 +35,19 @@ class BookInstanceService(
         )
 
         bookReservationProducer.sendMessage(reservationEvent)
+        return bookInstance
+    }
+
+    @Transactional
+    fun createBookInstance(bookContentId: UUID): BookInstance {
+        val id = UUID.randomUUID()
+        val bookInstance = BookInstance(
+            id = id,
+            bookContentId = bookContentId,
+            status = BookStatus.FREE
+        )
+
+        bookInstanceRepository.persist(bookInstance)
         return bookInstance
     }
 }

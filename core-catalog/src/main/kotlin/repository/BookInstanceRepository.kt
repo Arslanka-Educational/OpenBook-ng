@@ -2,6 +2,8 @@ package org.example.repository
 
 import org.example.model.BookInstance
 import org.example.model.BookStatus
+import org.springframework.dao.DuplicateKeyException
+import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.jdbc.core.RowMapper
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
@@ -15,9 +17,13 @@ class BookInstanceRepository(
     private val databaseClient: NamedParameterJdbcTemplate
 ) {
 
-    fun getBookInstance(id: UUID) : BookInstance? {
+    fun getBookInstance(id: UUID): BookInstance? {
         val namedParameters: SqlParameterSource = MapSqlParameterSource("id", id)
-        return databaseClient.queryForObject(SELECT_BOOK_INSTANCE, namedParameters, BookInstanceRowMapper())
+        return try {
+            databaseClient.queryForObject(SELECT_BOOK_INSTANCE, namedParameters, BookInstanceRowMapper())
+        } catch (e: EmptyResultDataAccessException) {
+            null
+        }
     }
 
     fun persist(bookInstance: BookInstance) {
@@ -28,16 +34,30 @@ class BookInstanceRepository(
                 "book_status" to bookInstance.status.name
             )
         )
+        try {
+            databaseClient.update(INSERT_BOOK_INSTANCE, namedParameters)
+        } catch (_: DuplicateKeyException) {
 
-        databaseClient.update(INSERT_BOOK_INSTANCE, namedParameters)
+        }
+    }
+
+    fun update(bookInstance: BookInstance) {
+        val namedParameters: SqlParameterSource = MapSqlParameterSource().addValues(
+            mapOf(
+                "id" to bookInstance.id,
+                "status" to bookInstance.status.name
+            )
+        )
+        databaseClient.query(UPDATE_BOOK_INSTANCE, namedParameters, BookInstanceRowMapper())
+
     }
 
     class BookInstanceRowMapper : RowMapper<BookInstance> {
         override fun mapRow(rs: ResultSet, rowNum: Int): BookInstance {
             return BookInstance(
                 id = UUID.fromString(rs.getString("id")),
-                bookContentId = UUID.fromString(rs.getString("name")),
-                status = BookStatus.valueOf(rs.getString("password")),
+                bookContentId = UUID.fromString(rs.getString("book_content_id")),
+                status = BookStatus.valueOf(rs.getString("status")),
             )
         }
     }
@@ -47,8 +67,15 @@ class BookInstanceRepository(
             INSERT INTO book_instance (id, book_content_id, status) VALUES (:id, :book_content_id, :book_status)
         """.trimIndent()
 
+        val UPDATE_BOOK_INSTANCE = """
+            UPDATE book_instance 
+            SET status = :status
+            WHERE id = :id
+            RETURNING id, book_content_id, status;
+        """.trimIndent()
+
         val SELECT_BOOK_INSTANCE = """
-            SELECT id, book_content_id, book_status from book_instance where id = :id
+            SELECT id, book_content_id, status from book_instance where id = :id
         """.trimIndent()
     }
 }

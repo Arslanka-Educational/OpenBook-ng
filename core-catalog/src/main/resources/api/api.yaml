@@ -98,6 +98,34 @@ paths:
         404:
           $ref: '#/components/responses/404'
 
+  /v1/books/{bookContentId}/instance:
+    post:
+      operationId: postBookInstance
+      tags: [ Books ]
+      parameters:
+        - name: bookContentId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Id of a book content
+#      requestBody:
+#        required: true
+#        content:
+#          application/json:
+#            schema:
+#              $ref: '#/components/schemas/BookReservationInitializationRequest'
+      responses:
+        201:
+          description: Book instance created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookInstanceResponse'
+        404:
+          $ref: '#/components/responses/404'
+
 components:
 
   responses:
@@ -113,6 +141,19 @@ components:
             $ref: '#/components/schemas/Error'
 
   schemas:
+#    PostBookInstanceRequest:
+#      type: object
+#      required:
+#        - book_content_id
+#        - user_id
+#      properties:
+#        book_content_id:
+#          type: string
+#          format: uuid
+#        user_id:
+#          type: string
+#          format: uuid
+
     BookReservationInitializationRequest:
       type: object
       required:
