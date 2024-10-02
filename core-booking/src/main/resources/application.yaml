@@ -6,14 +6,14 @@ spring:
     url: ${SPRING_DATASOURCE_URL}
     username: ${SPRING_DATASOURCE_USERNAME}
     password: ${SPRING_DATASOURCE_PASSWORD}
-  # kafka:
-  #   consumer:
-  #     bootstrap-servers: ${SPRING_KAFKA_BOOTSTRAP_SERVERS}
-  #     key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-  #     value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-  #     group-id: core-catalog-reservations-1
-  #     topic:
-  #       name: core-catalog-reservations
+  kafka:
+    consumer:
+      bootstrap-servers: ${SPRING_KAFKA_BOOTSTRAP_SERVERS}
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      group-id: core-catalog-reservations-1
+      topic:
+        name: core-catalog-reservations
   task-scheduler:
     pool-size: 5
   timeout:
