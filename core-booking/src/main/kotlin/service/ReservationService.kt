@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import java.time.Instant
 import java.util.UUID
+import kotlin.math.log
 
 @Service
 class ReservationService(
@@ -17,6 +18,7 @@ class ReservationService(
     private val taskScheduler: RetryableTaskScheduler,
     @Value("\${spring.timeout.core-catalog-callback-timeout-millis}")
     private val tpsTimeoutMillis: Long,
+    private val restRequestSendService: RestRequestSendService,
 ) {
 
     private val logger = LoggerFactory.getLogger(ReservationService::class.java)
@@ -70,7 +72,13 @@ class ReservationService(
         }
 
         var reservation = originalReservation
-        //TODO (core-catalog call with kafka notification)
+        logger.debug("Sending to core-catalog reservation: $reservation")
+        restRequestSendService.sendBookInstance(
+            bookInstanceId = reservation.bookId,
+            reservationId = reservation.id,
+            userId = reservation.userId
+        ) ?: throw IllegalArgumentException("Couldn't send request to CORE-CATALOG reservation: $reservation")
+
         reservation = reservationRepository.updateWithIdAndStatus(
             id = reservation.id,
             uid = reservation.userId,

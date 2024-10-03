@@ -1,5 +1,6 @@
 package org.example.model
 
+import org.slf4j.LoggerFactory
 import org.springframework.dao.DuplicateKeyException
 import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.jdbc.core.JdbcTemplate
@@ -15,6 +16,8 @@ import java.util.UUID
 class ReservationRepository(
     private val jdbcTemplate: JdbcTemplate,
 ) {
+    private val logger = LoggerFactory.getLogger(ReservationRepository::class.java)
+
     private companion object {
         private const val FIND_RESERVATION_REQUEST_BY_ID_AND_UID =
             "SELECT id, user_id, book_id, created_at, updated_at, status, reason FROM reservations WHERE id = ? AND user_id = ? LIMIT 1"
@@ -88,6 +91,8 @@ class ReservationRepository(
                 expectedStatus.toString(),
             )
         } catch (e: EmptyResultDataAccessException) {
+            e.printStackTrace()
+            logger.error(e.message)
             null
         }
     }

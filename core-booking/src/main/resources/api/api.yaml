@@ -92,6 +92,35 @@ components:
             $ref: '#/components/schemas/Error'
 
   schemas:
+    BookReservationInitializationRequest:
+      type: object
+      required:
+        - external_id
+        - user_id
+      properties:
+        external_id:
+          type: string
+          format: uuid
+        user_id:
+          type: string
+          format: uuid
+
+    BookInstanceResponse:
+      type: object
+      required:
+        - id
+        - bookContentId
+        - status
+      properties:
+        id:
+          type: string
+          format: uuid
+        bookContentId:
+          type: string
+          format: uuid
+        status:
+          type: string
+
     BookReservationStatus:
       type: string
       enum: [ SUCCESS, FAILED, IN_PROGRESS ]
