@@ -33,7 +33,7 @@ class CoreCatalogEventsListener(
             status = updatedStatus,
             reason = reservationEvent.reason,
             expectedStatus = Reservation.ReservationStatus.IN_PROGRESS,
-        )!!
+        )
     }
 
     data class ReservationEvent(

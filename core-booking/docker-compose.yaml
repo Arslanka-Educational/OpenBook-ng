@@ -34,6 +34,7 @@ services:
     networks:
       - kafka-net
       - db-net
+      - shared-network
 
   core-booking-2:
     build:
@@ -51,6 +52,7 @@ services:
     networks:
       - kafka-net
       - db-net
+      - shared-network
   
   balancer:
     image: nginx
@@ -67,6 +69,7 @@ services:
     networks:
       - db-net
       - kafka-net
+      - shared-network
 
 volumes:
   postgres_data:
@@ -74,4 +77,6 @@ volumes:
 networks:
   db-net:
   kafka-net:
+    external: true
+  shared-network:
     external: true
