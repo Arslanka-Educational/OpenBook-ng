@@ -1,5 +1,6 @@
 package org.example.api
 
+import org.example.client.CoreCatalogClient
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RestController
 import ru.openbook.api.BooksApi
@@ -11,8 +12,8 @@ import java.util.*
 
 @RestController
 class BookController(
-
-) : BooksApi{
+    private val coreCatalogClient: CoreCatalogClient,
+) : BooksApi {
     override fun getBookContentByTitle(title: String): ResponseEntity<List<BookContentResponse>> {
         TODO("Not yet implemented")
     }
@@ -29,11 +30,16 @@ class BookController(
         bookInstanceId: UUID,
         bookReservationInitializationRequest: BookReservationInitializationRequest
     ): ResponseEntity<BookInstanceResponse> {
-        TODO("Not yet implemented")
+        return ResponseEntity.ok(
+            coreCatalogClient.initializeBookReservation(
+                bookInstanceId,
+                bookReservationInitializationRequest
+            )
+        )
     }
 
     override fun postBookInstance(bookContentId: UUID): ResponseEntity<BookInstanceResponse> {
-        TODO("Not yet implemented")
+        return ResponseEntity.ok(coreCatalogClient.postBookInstance(bookContentId))
     }
 
     override fun searchBooks(

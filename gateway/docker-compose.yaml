@@ -9,12 +9,14 @@ services:
       - postgres_data:/var/lib/postgresql/data
       - ./src/main/resources/db:/docker-entrypoint-initdb.d
     ports:
-      - "5432:5432"
+      - "5430:5432"
     logging:
       driver: "json-file"
       options:
         max-size: "200k"
         max-file: "10"
+    networks:
+      - db-net
 
   app:
     build:
@@ -30,10 +32,12 @@ services:
       - "8080:8080"
     networks:
       - shared-network
+      - db-net
 
 volumes:
   postgres_data:
 
 networks:
+  db-net:
   shared-network:
     external: true
