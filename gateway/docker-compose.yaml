@@ -28,6 +28,12 @@ services:
       - postgres
     ports:
       - "8080:8080"
+    networks:
+      - shared-network
 
 volumes:
   postgres_data:
+
+networks:
+  shared-network:
+    external: true

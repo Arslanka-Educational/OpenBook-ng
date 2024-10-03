@@ -23,7 +23,7 @@ class BookInstanceService(
     ): BookInstance? {
         val bookInstance: BookInstance = bookInstanceRepository.getBookInstance(bookInstanceId) ?: return null
 
-        bookInstance.status = BookStatus.SUCCESS
+        bookInstance.status = BookStatus.RESERVED
         bookInstanceRepository.update(bookInstance)
 
         val reservationEvent = ReservationEvent(

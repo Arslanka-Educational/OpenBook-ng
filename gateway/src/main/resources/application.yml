@@ -31,7 +31,8 @@ spring:
       connection-timeout: 30000
   clients:
     core-booking:
-      host: http://84.201.172.171:80
+
+      host:
 
 rsa:
   public-key: classpath:certs/public.pem

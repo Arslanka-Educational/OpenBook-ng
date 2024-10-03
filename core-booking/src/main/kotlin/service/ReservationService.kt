@@ -77,7 +77,7 @@ class ReservationService(
             bookInstanceId = reservation.bookId,
             reservationId = reservation.id,
             userId = reservation.userId
-        ) ?: throw IllegalArgumentException("Couldn't send request to CORE-CATALOG reservation: $reservation")
+        )
 
         reservation = reservationRepository.updateWithIdAndStatus(
             id = reservation.id,

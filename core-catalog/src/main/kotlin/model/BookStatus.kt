@@ -1,7 +1,7 @@
 package org.example.model
 
 enum class BookStatus {
-    SUCCESS,
+    RESERVED,
     FAILED,
     FREE
 }
