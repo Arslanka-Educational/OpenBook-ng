@@ -5,11 +5,14 @@ import org.springframework.web.bind.annotation.RestController
 import ru.openbook.api.BooksApi
 import ru.openbook.model.BookContentResponse
 import ru.openbook.model.BookInstanceResponse
+import ru.openbook.model.BookReservationInitializationRequest
 import ru.openbook.model.BookSearchResponse
-import java.util.UUID
+import java.util.*
 
 @RestController
-class BooksApi: BooksApi {
+class BookController(
+
+) : BooksApi{
     override fun getBookContentByTitle(title: String): ResponseEntity<List<BookContentResponse>> {
         TODO("Not yet implemented")
     }
@@ -22,7 +25,14 @@ class BooksApi: BooksApi {
         TODO("Not yet implemented")
     }
 
-    override fun initializeBookReservation(bookInstanceId: UUID): ResponseEntity<BookInstanceResponse> {
+    override fun initializeBookReservation(
+        bookInstanceId: UUID,
+        bookReservationInitializationRequest: BookReservationInitializationRequest
+    ): ResponseEntity<BookInstanceResponse> {
+        TODO("Not yet implemented")
+    }
+
+    override fun postBookInstance(bookContentId: UUID): ResponseEntity<BookInstanceResponse> {
         TODO("Not yet implemented")
     }
 
@@ -30,7 +40,7 @@ class BooksApi: BooksApi {
         title: String?,
         author: String?,
         page: Int,
-        pageSize: Int,
+        pageSize: Int
     ): ResponseEntity<BookSearchResponse> {
         TODO("Not yet implemented")
     }
