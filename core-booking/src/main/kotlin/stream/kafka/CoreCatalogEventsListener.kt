@@ -19,11 +19,7 @@ class CoreCatalogEventsListener(
     internal fun resolvedReservationStatus(message: String) {
         println("======CONSUMED A MESSAGE $message")
         val reservationEvent: ReservationEvent = objectMapper.readValue(message, ReservationEvent::class.java)
-        val updatedStatus = when (reservationEvent.status) {
-            "SUCCESS" -> Reservation.ReservationStatus.SUCCESS
-            "FAILED" -> Reservation.ReservationStatus.FAILED
-            else -> Reservation.ReservationStatus.IN_PROGRESS
-        }
+        val updatedStatus = fromCoreCatalogStatus(reservationEvent.status)
 
         reservationRepository.updateWithIdAndStatus(
             id = reservationEvent.id,
@@ -35,6 +31,13 @@ class CoreCatalogEventsListener(
             expectedStatus = Reservation.ReservationStatus.IN_PROGRESS,
         )
     }
+
+    internal fun fromCoreCatalogStatus(status: String) =
+        when (status) {
+            "RESERVED" -> Reservation.ReservationStatus.SUCCESS
+            "FREE" -> Reservation.ReservationStatus.FAILED
+            else -> Reservation.ReservationStatus.IN_PROGRESS
+        }
 
     data class ReservationEvent(
         @JsonProperty("external_id")
