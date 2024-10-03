@@ -1,16 +1,6 @@
 server:
   port: 8080
 
-#external:
-#  core-booking:
-#    url: ${CORE_BOOKING_URL}
-#  core-catalog:
-#    url: ${CORE_CATALOG_URL}
-#  core-catalog-writer:
-#    url: ${CORE_CATALOG_WRITER_URL}
-#  core-registry:
-#    url: ${CORE_REGISTRY_URL}
-
 spring:
   security:
     authorities:
@@ -31,8 +21,12 @@ spring:
       connection-timeout: 30000
   clients:
     core-booking:
+      host: http://core-booking-balancer-1
+      port: 80
 
-      host:
+    core-catalog:
+      host: http://core-catalog-app-1
+      port: 8081
 
 rsa:
   public-key: classpath:certs/public.pem
