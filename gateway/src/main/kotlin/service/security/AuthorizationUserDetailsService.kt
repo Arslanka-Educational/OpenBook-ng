@@ -37,7 +37,6 @@ class AuthorizationUserDetailsService(
         val user = userRegisterRequest.toUser(passwordEncoder)
             .copy(id = UUID.randomUUID())
 
-        userRepository.registerUser(user)
-        return user
+        return userRepository.registerUser(user)
     }
 }

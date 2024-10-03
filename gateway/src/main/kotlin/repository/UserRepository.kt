@@ -2,6 +2,7 @@ package org.example.repository
 
 import model.User
 import org.example.repository.util.mapUserType
+import org.springframework.dao.DuplicateKeyException
 import org.springframework.jdbc.core.RowMapper
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
@@ -19,18 +20,23 @@ class UserRepository(
         return databaseClient.queryForObject(GET_BY_USERNAME, namedParameters, UserRowMapper())
     }
 
-    fun registerUser(user: User) {
-        val namedParameters: SqlParameterSource = MapSqlParameterSource().addValues(
-            mapOf(
-                "id" to user.id,
-                "username" to user.name,
-                "password" to user.password,
-                "email" to user.email,
-                "user_type" to user.userType.typeName,
+    fun registerUser(user: User): User {
+        try {
+            val namedParameters: SqlParameterSource = MapSqlParameterSource().addValues(
+                mapOf(
+                    "id" to user.id,
+                    "username" to user.name,
+                    "password" to user.password,
+                    "email" to user.email,
+                    "user_type" to user.userType.typeName,
+                )
             )
-        )
-
-        databaseClient.update(INSERT_USER, namedParameters)
+            databaseClient.update(INSERT_USER, namedParameters)
+            return databaseClient.queryForObject(GET_BY_EMAIL, namedParameters, UserRowMapper())!!
+        } catch (e: DuplicateKeyException) {
+            val namedParameters: SqlParameterSource = MapSqlParameterSource().addValue("email", user.email)
+            return databaseClient.queryForObject(GET_BY_EMAIL, namedParameters, UserRowMapper())!!
+        }
     }
 
     class UserRowMapper : RowMapper<User> {
@@ -48,6 +54,10 @@ class UserRepository(
     private companion object {
         val GET_BY_USERNAME = """
             SELECT id, name, password, email, user_type FROM users WHERE name LIKE CONCAT('%', :username, '%')
+        """.trimIndent()
+
+        val GET_BY_EMAIL = """
+            SELECT id, name, password, email, user_type FROM users WHERE email = :email
         """.trimIndent()
 
         val INSERT_USER = """
