@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import java.time.Instant
 import java.util.UUID
-import kotlin.math.log
 
 @Service
 class ReservationService(
@@ -18,7 +17,7 @@ class ReservationService(
     private val taskScheduler: RetryableTaskScheduler,
     @Value("\${spring.timeout.core-catalog-callback-timeout-millis}")
     private val tpsTimeoutMillis: Long,
-    private val restRequestSendService: RestRequestSendService,
+    private val restRequestSendService: CoreCatalogAdapterService,
 ) {
 
     private val logger = LoggerFactory.getLogger(ReservationService::class.java)
@@ -73,8 +72,8 @@ class ReservationService(
 
         var reservation = originalReservation
         logger.debug("Sending to core-catalog reservation: $reservation")
-        restRequestSendService.sendBookInstance(
-            bookInstanceId = reservation.bookId,
+        restRequestSendService.reserveBook(
+            bookId = reservation.bookId,
             reservationId = reservation.id,
             userId = reservation.userId
         )

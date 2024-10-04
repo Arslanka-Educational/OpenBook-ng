@@ -157,13 +157,13 @@ components:
     BookReservationInitializationRequest:
       type: object
       required:
-        - external_id
-        - user_id
+        - externalId
+        - userId
       properties:
-        external_id:
+        externalId:
           type: string
           format: uuid
-        user_id:
+        userId:
           type: string
           format: uuid
 

@@ -75,7 +75,7 @@ class BookInstanceRepository(
         """.trimIndent()
 
         val SELECT_BOOK_INSTANCE = """
-            SELECT id, book_content_id, status from book_instance where id = :id
+            SELECT id, book_content_id, status from book_instance where id = :id and status = 'FREE';
         """.trimIndent()
     }
 }
