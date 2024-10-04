@@ -26,7 +26,9 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
     implementation("org.springframework.kafka:spring-kafka")
-
+    implementation("io.micrometer:micrometer-core:1.13.5")
+    implementation("io.micrometer:micrometer-registry-prometheus:1.13.5")
+    implementation("org.springframework.boot:spring-boot-starter-actuator:3.3.4")
 }
 
 tasks.test {

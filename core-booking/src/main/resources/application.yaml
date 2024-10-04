@@ -21,3 +21,20 @@ spring:
   retry:
     max-attempts: 3
     delay-between-retries-millis: 5000
+  
+  clients:
+    core-catalog:
+      url: http://core-catalog-app-1:8081
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,prometheus
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+    distribution:
+      percentiles-histogram:
+        "[http.server.requests]": true
