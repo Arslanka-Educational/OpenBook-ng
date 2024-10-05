@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.example.model.Reservation
 import org.example.model.ReservationRepository
+import org.example.service.BookingMetricsService
 import org.springframework.kafka.annotation.KafkaListener
 import org.springframework.stereotype.Service
 import java.time.Instant
@@ -13,6 +14,7 @@ import java.util.UUID
 class CoreCatalogEventsListener(
     private val reservationRepository: ReservationRepository,
     private val objectMapper: ObjectMapper,
+    private val bookingMetricsService: BookingMetricsService,
 ) {
 
     @KafkaListener(topics = ["\${spring.kafka.consumer.topic.name}"], groupId = "\${spring.kafka.consumer.group-id}")
@@ -30,6 +32,8 @@ class CoreCatalogEventsListener(
             reason = reservationEvent.reason,
             expectedStatus = Reservation.ReservationStatus.IN_PROGRESS,
         )
+
+        bookingMetricsService.incrementBookingMetric(updatedStatus)
     }
 
     internal fun fromCoreCatalogStatus(status: String) =
