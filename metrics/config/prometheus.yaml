@@ -9,7 +9,13 @@ scrape_configs:
 
   - job_name: 'core-booking-1'
     scrape_interval: 1s
-    metrics_path: '/actuator/metrics'
+    metrics_path: '/actuator/prometheus'
     static_configs:
-     - targets: ['core-booking-core-booking-1-1:8080']
+     - targets: ['core-booking-1:8080']
+  
+  - job_name: 'core-booking-2'
+    scrape_interval: 1s
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+     - targets: ['core-booking-2:8080']
   

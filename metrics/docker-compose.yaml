@@ -1,17 +1,19 @@
 services:
-  # grafana:
-  #   build: './config/grafana'
-  #   ports:
-  #     - 3000:3000
-  #   volumes:
-  #     - ./grafana:/var/lib/grafana
-  #   environment:
-  #     - GF_SECURITY_ADMIN_USER=admin
-  #     - GF_SECURITY_ADMIN_PASSWORD=admin
-  #   networks:
-  #     monitoring:
-  #       aliases:
-  #         - grafana
+  grafana:
+    build: './config/grafana'
+    container_name: 'grafana'
+    hostname: grafana
+    user: root
+    ports:
+      - 3001:3000
+    volumes:
+      - ./grafana:/var/lib/grafana
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    networks:
+      - shared-network   
+
   prometheus:
     image: prom/prometheus
     container_name: 'prometheus'
@@ -27,10 +29,10 @@ services:
     networks:
       - shared-network
 
+volumes:
+  prometheus:
+
 networks:
   monitoring:
   shared-network:
     external: true
-
-volumes:
-  prometheus: {}

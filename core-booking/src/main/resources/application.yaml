@@ -30,11 +30,14 @@ management:
   endpoints:
     web:
       exposure:
-        include: health,prometheus
-  metrics:
-    export:
-      prometheus:
-        enabled: true
-    distribution:
-      percentiles-histogram:
-        "[http.server.requests]": true
+        include: 'prometheus,health'
+  endpoint:
+    prometheus:
+      enabled: true
+    metrics:
+      export:
+        prometheus:
+          enabled: true
+      distribution:
+        percentiles-histogram:
+          "[http.server.requests]": true
