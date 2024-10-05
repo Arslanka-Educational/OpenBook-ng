@@ -14,16 +14,22 @@ import java.util.*
 class BookController(
     private val coreCatalogClient: CoreCatalogClient,
 ) : BooksApi {
-    override fun getBookContentByTitle(title: String): ResponseEntity<List<BookContentResponse>> {
-        TODO("Not yet implemented")
+    override fun getBookContentByTitle(title: UUID): ResponseEntity<List<BookContentResponse>> {
+        return ResponseEntity.ok(
+            coreCatalogClient.getBookContentByTitle(title)
+        )
     }
 
-    override fun getBookInstancesByBookContentId(bookContentId: String): ResponseEntity<List<BookInstanceResponse>> {
-        TODO("Not yet implemented")
+    override fun getBookInstancesByBookContentId(bookContentId: UUID): ResponseEntity<List<BookInstanceResponse>> {
+        return ResponseEntity.ok(
+            coreCatalogClient.getBookInstancesByBookContentId(bookContentId)
+        )
     }
 
-    override fun getBooksContentById(bookContentId: String): ResponseEntity<List<BookContentResponse>> {
-        TODO("Not yet implemented")
+    override fun getBooksContentById(bookContentId: UUID): ResponseEntity<List<BookContentResponse>> {
+        return ResponseEntity.ok(
+            coreCatalogClient.getBooksContentById(bookContentId)
+        )
     }
 
     override fun initializeBookReservation(

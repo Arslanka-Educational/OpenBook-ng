@@ -6,6 +6,8 @@
 **/gradle/
 !src/**/build/
 
+**/*_postgres_data
+
 # Ignore Gradle GUI config
 gradle-app.setting
 

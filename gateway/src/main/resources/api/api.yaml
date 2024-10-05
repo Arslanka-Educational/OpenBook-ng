@@ -137,6 +137,7 @@ paths:
           required: true
           schema:
             type: string
+            format: uuid
           description: ID of the book content.
       responses:
         200:
@@ -178,6 +179,7 @@ paths:
           required: true
           schema:
             type: string
+            format: uuid
           description: ID of the book.
       responses:
         200:
@@ -201,6 +203,7 @@ paths:
           required: true
           schema:
             type: string
+            format: uuid
           description: Title of the book.
       responses:
         200:
